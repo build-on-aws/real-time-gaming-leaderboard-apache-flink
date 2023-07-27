@@ -1,8 +1,9 @@
-import {Stack, StackProps} from 'aws-cdk-lib';
+import {Aws, Stack, StackProps} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {Stream, StreamEncryption, StreamMode} from "aws-cdk-lib/aws-kinesis";
 import {ManagedFlinkNotebookCommon} from "./constructs/managed-flink-notebook-common";
 import {DatagenEvents} from "./constructs/datagen/datagen-events";
+import {ManagedFlinkNotebook} from "./constructs/managed-flink-notebook";
 
 export class GamingLeaderboardStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
@@ -11,6 +12,7 @@ export class GamingLeaderboardStack extends Stack {
         // ------------------- Part 1: Ingestion -------------------
         // Kinesis Data Stream events
         const eventsStream = new Stream(this, 'events', {
+            streamName: Aws.STACK_NAME + "-events",
             streamMode: StreamMode.ON_DEMAND,
             encryption: StreamEncryption.MANAGED
         });

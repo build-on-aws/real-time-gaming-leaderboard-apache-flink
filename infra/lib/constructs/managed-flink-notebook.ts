@@ -5,12 +5,13 @@ import {ISecurityGroup, IVpc, SecurityGroup} from "aws-cdk-lib/aws-ec2";
 import {CfnApplicationCloudWatchLoggingOptionV2} from "aws-cdk-lib/aws-kinesisanalytics";
 import {Aws} from "aws-cdk-lib";
 import {LogGroup, LogStream} from "aws-cdk-lib/aws-logs";
+import {CfnDatabase} from "aws-cdk-lib/aws-glue";
 
 interface ManagedFlinkNotebookProps {
     appName: string,
     role: IRole,
     vpc?: IVpc,
-    glueDbArn: string
+    glueDB: CfnDatabase
 }
 
 export class ManagedFlinkNotebook extends Construct {
@@ -19,6 +20,8 @@ export class ManagedFlinkNotebook extends Construct {
 
     constructor(scope: Construct, id: string, props: ManagedFlinkNotebookProps) {
         super(scope, id);
+
+        const databaseArn = "arn:aws:glue:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":database/" + props.glueDB.ref;
 
         let application = new CfnApplication(this, 'application', {
             applicationName: props.appName,
@@ -38,7 +41,7 @@ export class ManagedFlinkNotebook extends Construct {
                     },
                     catalogConfiguration: {
                         glueDataCatalogConfiguration: {
-                            databaseArn: props.glueDbArn
+                            databaseArn: databaseArn
                         }
                     },
                     customArtifactsConfiguration: [{
@@ -80,7 +83,7 @@ export class ManagedFlinkNotebook extends Construct {
                         },
                         catalogConfiguration: {
                             glueDataCatalogConfiguration: {
-                                databaseArn: props.glueDbArn
+                                databaseArn: databaseArn
                             }
                         },
                         customArtifactsConfiguration: [{
@@ -101,6 +104,7 @@ export class ManagedFlinkNotebook extends Construct {
             logGroup: logGroup
         });
 
+        application.addDependency(props.glueDB);
         application.addDependency(props.role.node.defaultChild as CfnRole);
 
         new CfnApplicationCloudWatchLoggingOptionV2(this, 'logging-attach', {

@@ -1,9 +1,10 @@
-import boto3
 import datetime
 import json
 import os
 import random
 import time
+
+import boto3
 
 kinesis = boto3.client('kinesis')
 
@@ -19,7 +20,7 @@ def lambda_handler(event, context):
                 "player_id": "player-{}".format(i),
                 "speed_kmph": speed,
                 "distance_meters": distance,
-                "event_time": datetime.datetime.now().isoformat()
+                "event_time": datetime.datetime.now().isoformat(timespec="milliseconds").replace('T', ' ')
             })
             records.append({'Data': data.encode('utf-8'), 'PartitionKey': str(i)})
 

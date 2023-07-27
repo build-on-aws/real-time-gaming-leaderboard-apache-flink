@@ -7,3 +7,4 @@
 .cdk.staging
 **/cdk.out
 .idea
+*.drawio
