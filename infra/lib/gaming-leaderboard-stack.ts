@@ -23,5 +23,13 @@ export class GamingLeaderboardStack extends Stack {
         // Notebook common role for you to use.
         const notebookCommon = new ManagedFlinkNotebookCommon(this, "notebook-common");
         eventsStream.grantRead(notebookCommon.notebookRole);
+
+        // ------------------- Part 1: Ingestion Challenge Completed -------------------
+        // Spin up new notebook
+        new ManagedFlinkNotebook(this, "app", {
+            appName: Aws.STACK_NAME + "-notebook",
+            glueDB: notebookCommon.glueDB,
+            role: notebookCommon.notebookRole
+        });
     }
 }
