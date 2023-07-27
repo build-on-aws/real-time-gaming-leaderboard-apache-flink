@@ -1,9 +1,9 @@
 ﻿{
   "paragraphs": [
     {
-      "text": "%flink.ssql\n\nCREATE TABLE `events` (\n    `player_id` STRING,\n    `speed_kmph` BIGINT,\n    `distance_meters` BIGINT,\n    `event_time` TIMESTAMP(3),\n     WATERMARK FOR event_time AS event_time - INTERVAL '5' SECOND\n)\nWITH (\n    'connector' = 'kinesis', -- connect to the kinesis stream\n    'stream' = 'GamingLeaderboardStack-events',\n    'aws.region' = 'eu-west-1', -- example: eu-west-1\n    'scan.stream.initpos' = 'TRIM_HORIZON', -- read from the very beginning of the stream\n    'format' = 'json' -- source data in json format\n);\n",
+      "text": "%flink.ssql\n\nCREATE TABLE `events` (\n    `player_id` STRING,\n    `speed_kmph` BIGINT,\n    `distance_meters` BIGINT,\n    `event_time` TIMESTAMP(3),\n     WATERMARK FOR event_time AS event_time - INTERVAL '5' SECOND\n)\nWITH (\n    'connector' = 'kinesis', -- connect to the kinesis stream\n    'stream' = 'GamingLeaderboardStack-events',\n    'aws.region' = '[Enter AWS region name here]', -- example: eu-west-1\n    'scan.stream.initpos' = 'TRIM_HORIZON', -- read from the very beginning of the stream\n    'format' = 'json' -- source data in json format\n);\n",
       "user": "anonymous",
-      "dateUpdated": "2023-07-27T16:23:32+0000",
+      "dateUpdated": "2023-07-27T17:15:27+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -25,17 +25,17 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1690474998002_1161970222",
-      "id": "paragraph_1690474998002_1161970222",
-      "dateCreated": "2023-07-27T16:23:18+0000",
+      "jobName": "paragraph_1690478117126_1122405918",
+      "id": "paragraph_1690478117126_1122405918",
+      "dateCreated": "2023-07-27T17:15:17+0000",
       "status": "READY",
       "focus": true,
-      "$$hashKey": "object:9358"
+      "$$hashKey": "object:2973"
     },
     {
-      "text": "%flink.ssql\nSELECT * FROM events LIMIT 10",
+      "text": "%flink.ssql(type=update)\n-- Challenge 1: select data from events table\nSELECT * FROM events",
       "user": "anonymous",
-      "dateUpdated": "2023-07-27T16:24:20+0000",
+      "dateUpdated": "2023-07-27T17:15:38+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -47,38 +47,7 @@
         "colWidth": 12,
         "editorMode": "ace/mode/sql",
         "fontSize": 9,
-        "results": {
-          "0": {
-            "graph": {
-              "mode": "table",
-              "height": 300,
-              "optionOpen": false,
-              "setting": {
-                "table": {
-                  "tableGridState": {},
-                  "tableColumnTypeState": {
-                    "names": {
-                      "player_id": "string",
-                      "speed_kmph": "string",
-                      "distance_meters": "string",
-                      "event_time": "string"
-                    },
-                    "updated": false
-                  },
-                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
-                  "tableOptionValue": {
-                    "useFilter": false,
-                    "showPagination": false,
-                    "showAggregationFooter": false
-                  },
-                  "updated": false,
-                  "initialized": false
-                }
-              },
-              "commonSetting": {}
-            }
-          }
-        },
+        "results": {},
         "enabled": true
       },
       "settings": {
@@ -86,41 +55,18 @@
         "forms": {}
       },
       "apps": [],
-      "runtimeInfos": {
-        "jobUrl": {
-          "propertyName": "jobUrl",
-          "label": "FLINK JOB",
-          "tooltip": "View in Flink web UI",
-          "group": "flink",
-          "values": [
-            {
-              "jobUrl": "/flinkdashboard/#/job/a85b60f0fa62cb635db90cdfea388b6c",
-              "$$hashKey": "object:10040"
-            }
-          ],
-          "interpreterSettingId": "flink"
-        }
-      },
+      "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1690475028239_797560878",
-      "id": "paragraph_1690475028239_797560878",
-      "dateCreated": "2023-07-27T16:23:48+0000",
-      "dateStarted": "2023-07-27T16:24:07+0000",
-      "status": "RUNNING",
-      "$$hashKey": "object:9359",
-      "results": {
-        "msg": [
-          {
-            "data": "player_id\tspeed_kmph\tdistance_meters\tevent_time\n",
-            "type": "TABLE"
-          }
-        ]
-      }
+      "jobName": "paragraph_1690478127570_1218107699",
+      "id": "paragraph_1690478127570_1218107699",
+      "dateCreated": "2023-07-27T17:15:27+0000",
+      "status": "READY",
+      "$$hashKey": "object:2974"
     },
     {
       "text": "%flink.ssql(type=update)\n-- Drop table if it's invalid to re-create\n\nDROP TABLE events;",
       "user": "anonymous",
-      "dateUpdated": "2023-07-27T16:23:48+0000",
+      "dateUpdated": "2023-07-27T17:15:48+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -142,15 +88,15 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1690475012224_1624381759",
-      "id": "paragraph_1690475012224_1624381759",
-      "dateCreated": "2023-07-27T16:23:32+0000",
+      "jobName": "paragraph_1690478145110_1561640274",
+      "id": "paragraph_1690478145110_1561640274",
+      "dateCreated": "2023-07-27T17:15:45+0000",
       "status": "READY",
-      "$$hashKey": "object:9360"
+      "$$hashKey": "object:2975"
     }
   ],
-  "name": "part-1-ingestion-setup",
-  "id": "2J7JN5QPW",
+  "name": "part-1-ingestion-answer",
+  "id": "2J7AJ4WTG",
   "defaultInterpreterGroup": "flink",
   "version": "0.10.1",
   "noteParams": {},
@@ -162,5 +108,5 @@
     "personalizedMode": "false"
   },
   "info": {},
-  "path": "/part-1"
+  "path": "/part-1-ingestion-answer"
 }
