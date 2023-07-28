@@ -4,6 +4,8 @@ import {Stream, StreamEncryption, StreamMode} from "aws-cdk-lib/aws-kinesis";
 import {ManagedFlinkNotebookCommon} from "./constructs/managed-flink-notebook-common";
 import {DatagenEvents} from "./constructs/datagen/datagen-events";
 import {ManagedFlinkNotebook} from "./constructs/managed-flink-notebook";
+import {Network} from "./constructs/network";
+import {ServerlessDatabase} from "./constructs/serverlessDatabase";
 
 export class GamingLeaderboardStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
@@ -31,5 +33,21 @@ export class GamingLeaderboardStack extends Stack {
             glueDB: notebookCommon.glueDB,
             role: notebookCommon.notebookRole
         });
+
+        // ------------------- Part 2: CDC Enrichment setup -------------------
+        const network = new Network(this, "network");
+        const serverlessDatabase = new ServerlessDatabase(this, "player-db", {vpc: network.vpc});
+
+        // // Spin up new notebook in VPC
+        // const managedFlinkNotebook = new ManagedFlinkNotebook(this, "app-in-vpc", {
+        //     appName: Aws.STACK_NAME + "-notebook-in-vpc",
+        //     glueDB: notebookCommon.glueDB,
+        //     role: notebookCommon.notebookRole,
+        //     vpc: network.vpc
+        // });
+        // if (managedFlinkNotebook.applicationSecurityGroup) {
+        //     serverlessDatabase.securityGroup.addIngressRule(managedFlinkNotebook.applicationSecurityGroup, Port.tcp(3306))
+        // }
+
     }
 }

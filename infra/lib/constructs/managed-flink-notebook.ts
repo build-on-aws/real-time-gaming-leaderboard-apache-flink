@@ -23,7 +23,7 @@ export class ManagedFlinkNotebook extends Construct {
 
         const databaseArn = "arn:aws:glue:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":database/" + props.glueDB.ref;
 
-        let application = new CfnApplication(this, 'application', {
+        let application = new CfnApplication(this, id + "-cfn", {
             applicationName: props.appName,
             runtimeEnvironment: "ZEPPELIN-FLINK-3_0",
             applicationMode: "INTERACTIVE",
