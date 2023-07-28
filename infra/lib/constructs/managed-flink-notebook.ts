@@ -23,38 +23,7 @@ export class ManagedFlinkNotebook extends Construct {
 
         const databaseArn = "arn:aws:glue:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":database/" + props.glueDB.ref;
 
-        let application = new CfnApplication(this, id + "-cfn", {
-            applicationName: props.appName,
-            runtimeEnvironment: "ZEPPELIN-FLINK-3_0",
-            applicationMode: "INTERACTIVE",
-            serviceExecutionRole: props.role.roleArn,
-            applicationConfiguration: {
-                flinkApplicationConfiguration: {
-                    parallelismConfiguration: {
-                        parallelism: 4,
-                        configurationType: "CUSTOM"
-                    }
-                },
-                zeppelinApplicationConfiguration: {
-                    monitoringConfiguration: {
-                        logLevel: "INFO"
-                    },
-                    catalogConfiguration: {
-                        glueDataCatalogConfiguration: {
-                            databaseArn: databaseArn
-                        }
-                    },
-                    customArtifactsConfiguration: [{
-                        artifactType: "DEPENDENCY_JAR",
-                        mavenReference: {
-                            groupId: 'org.apache.flink',
-                            artifactId: "flink-sql-connector-kinesis",
-                            version: "1.15.4"
-                        }
-                    }]
-                }
-            }
-        });
+        let application;
 
         if (props.vpc) {
 
@@ -63,6 +32,7 @@ export class ManagedFlinkNotebook extends Construct {
             });
 
             application = new CfnApplication(this, 'application', {
+                applicationName: props.appName,
                 runtimeEnvironment: "ZEPPELIN-FLINK-3_0",
                 applicationMode: "INTERACTIVE",
                 serviceExecutionRole: props.role.roleArn,
@@ -71,6 +41,39 @@ export class ManagedFlinkNotebook extends Construct {
                         subnetIds: props.vpc.privateSubnets.map(subnet => subnet.subnetId),
                         securityGroupIds: [this.applicationSecurityGroup.securityGroupId]
                     }],
+                    flinkApplicationConfiguration: {
+                        parallelismConfiguration: {
+                            parallelism: 4,
+                            configurationType: "CUSTOM"
+                        }
+                    },
+                    zeppelinApplicationConfiguration: {
+                        monitoringConfiguration: {
+                            logLevel: "INFO"
+                        },
+                        catalogConfiguration: {
+                            glueDataCatalogConfiguration: {
+                                databaseArn: databaseArn
+                            }
+                        },
+                        customArtifactsConfiguration: [{
+                            artifactType: "DEPENDENCY_JAR",
+                            mavenReference: {
+                                groupId: 'org.apache.flink',
+                                artifactId: "flink-sql-connector-kinesis",
+                                version: "1.15.4"
+                            }
+                        }]
+                    }
+                }
+            });
+        } else {
+            application = new CfnApplication(this, id + "-cfn", {
+                applicationName: props.appName,
+                runtimeEnvironment: "ZEPPELIN-FLINK-3_0",
+                applicationMode: "INTERACTIVE",
+                serviceExecutionRole: props.role.roleArn,
+                applicationConfiguration: {
                     flinkApplicationConfiguration: {
                         parallelismConfiguration: {
                             parallelism: 4,

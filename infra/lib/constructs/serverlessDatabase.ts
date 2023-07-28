@@ -26,7 +26,7 @@ interface ServerlessDatabaseProps {
 export class ServerlessDatabase extends Construct {
 
     readonly securityGroup: ISecurityGroup
-    readonly secret?: ISecret
+    readonly secret: ISecret
     readonly hostAddress: string
 
     constructor(scope: Construct, id: string, props: ServerlessDatabaseProps) {
@@ -50,14 +50,14 @@ export class ServerlessDatabase extends Construct {
                 removalPolicy: RemovalPolicy.DESTROY
             });
 
-            this.secret = databaseCluster.secret;
+            this.secret = <ISecret>databaseCluster.secret;
             this.hostAddress = databaseCluster.clusterEndpoint.hostname;
         } else {
 
             this.secret = new Secret(this, "secret", {
                 removalPolicy: RemovalPolicy.DESTROY,
                 generateSecretString: {
-                    secretStringTemplate: '{"username":"admin", "database":"gaming", "engine":"mysql"}',
+                    secretStringTemplate: '{"username":"admin", "dbname":"gaming", "engine":"mysql"}',
                     generateStringKey: "password",
                     excludePunctuation: true
                 }

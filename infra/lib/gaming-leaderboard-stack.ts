@@ -6,6 +6,8 @@ import {DatagenEvents} from "./constructs/datagen/datagen-events";
 import {ManagedFlinkNotebook} from "./constructs/managed-flink-notebook";
 import {Network} from "./constructs/network";
 import {ServerlessDatabase} from "./constructs/serverlessDatabase";
+import {DatagenPlayers} from "./constructs/datagen/datagen-players";
+import {Port} from "aws-cdk-lib/aws-ec2";
 
 export class GamingLeaderboardStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
@@ -35,19 +37,29 @@ export class GamingLeaderboardStack extends Stack {
         });
 
         // ------------------- Part 2: CDC Enrichment setup -------------------
+        // VPC with private and public subnets for database
         const network = new Network(this, "network");
+        // MySQL database setup
         const serverlessDatabase = new ServerlessDatabase(this, "player-db", {vpc: network.vpc});
 
-        // // Spin up new notebook in VPC
-        // const managedFlinkNotebook = new ManagedFlinkNotebook(this, "app-in-vpc", {
-        //     appName: Aws.STACK_NAME + "-notebook-in-vpc",
-        //     glueDB: notebookCommon.glueDB,
-        //     role: notebookCommon.notebookRole,
-        //     vpc: network.vpc
-        // });
-        // if (managedFlinkNotebook.applicationSecurityGroup) {
-        //     serverlessDatabase.securityGroup.addIngressRule(managedFlinkNotebook.applicationSecurityGroup, Port.tcp(3306))
-        // }
+        // Data generator updating players data in MySQL players table.
+        new DatagenPlayers(this, "DatagenPlayers", {
+            databaseSecurityGroup: serverlessDatabase.securityGroup,
+            host: serverlessDatabase.hostAddress,
+            secret: serverlessDatabase.secret,
+            vpc: network.vpc
+        });
+
+        // Spin up new notebook in VPC
+        const managedFlinkNotebook = new ManagedFlinkNotebook(this, "app-in-vpc", {
+            appName: Aws.STACK_NAME + "-notebook-in-vpc",
+            glueDB: notebookCommon.glueDB,
+            role: notebookCommon.notebookRole,
+            vpc: network.vpc
+        });
+        if (managedFlinkNotebook.applicationSecurityGroup) {
+            serverlessDatabase.securityGroup.addIngressRule(managedFlinkNotebook.applicationSecurityGroup, Port.tcp(3306))
+        }
 
     }
 }

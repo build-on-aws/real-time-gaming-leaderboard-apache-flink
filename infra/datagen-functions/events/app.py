@@ -23,6 +23,9 @@ def lambda_handler(event, context):
                 "event_time": datetime.datetime.now().isoformat(timespec="milliseconds").replace('T', ' ')
             })
             records.append({'Data': data.encode('utf-8'), 'PartitionKey': str(i)})
+            kinesis.put_records(Records=records, StreamName=os.environ["KINESIS_STREAM_NAME"])
 
-        kinesis.put_records(Records=records, StreamName=os.environ["KINESIS_STREAM_NAME"])
-        time.sleep(5)
+            # Mimic real world retry and duplicate record ingestion 1 in 3 of the time
+            if random.randint(1, 3) == 1:
+                kinesis.put_records(Records=records, StreamName=os.environ["KINESIS_STREAM_NAME"])
+            time.sleep(5)
