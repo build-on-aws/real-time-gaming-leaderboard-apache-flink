@@ -6,7 +6,7 @@ import {CfnApplicationCloudWatchLoggingOptionV2} from "aws-cdk-lib/aws-kinesisan
 import {Aws} from "aws-cdk-lib";
 import {LogGroup, LogStream} from "aws-cdk-lib/aws-logs";
 import {CfnDatabase} from "aws-cdk-lib/aws-glue";
-import {IBucket} from "aws-cdk-lib/aws-s3";
+import {Asset} from "aws-cdk-lib/aws-s3-assets";
 
 const fs = require('fs');
 import path = require('path');
@@ -17,7 +17,6 @@ interface ManagedFlinkNotebookProps {
     role: IRole,
     vpc?: IVpc,
     glueDB: CfnDatabase
-    bucket?: IBucket
 }
 
 export class ManagedFlinkNotebook extends Construct {
@@ -37,26 +36,25 @@ export class ManagedFlinkNotebook extends Construct {
         }];
 
 
-        if (props.bucket) {
-            const url_file: string = path.join(__dirname, '../../datagen-functions/jar-sync/urls.txt');
-            const urls = fs.readFileSync(url_file, 'utf-8').split("\n");
-            for (let url of urls) {
-                const splits = url.split("/")
-                customArtifacts.push({
-                    artifactType: "DEPENDENCY_JAR",
-                    s3ContentLocation: {
-                        fileKey: splits[splits.length - 1],
-                        bucketArn: props.bucket.bucketArn
-                    }
-                });
-            }
-        }
-
-
         const databaseArn = "arn:aws:glue:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":database/" + props.glueDB.ref;
         let application;
 
         if (props.vpc) {
+
+            const fatJarPath: string = path.join(__dirname, '../../../jars/fat-jar-mysql-cdc-1.0-SNAPSHOT.jar');
+
+            const asset = new Asset(this, "fat-jar", {
+                path: fatJarPath
+            });
+            asset.grantRead(props.role);
+
+            customArtifacts.push({
+                artifactType: "DEPENDENCY_JAR",
+                s3ContentLocation: {
+                    fileKey: asset.s3ObjectKey,
+                    bucketArn: asset.bucket.bucketArn
+                }
+            });
 
             this.applicationSecurityGroup = new SecurityGroup(this, "app-sg", {
                 vpc: props.vpc

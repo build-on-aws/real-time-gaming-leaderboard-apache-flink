@@ -8,7 +8,6 @@ import {Network} from "./constructs/network";
 import {ServerlessDatabase} from "./constructs/serverlessDatabase";
 import {DatagenPlayers} from "./constructs/datagen/datagen-players";
 import {Port} from "aws-cdk-lib/aws-ec2";
-import {JarsCustomResource} from "./constructs/jars-custom-resource";
 
 export class GamingLeaderboardStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
@@ -51,18 +50,13 @@ export class GamingLeaderboardStack extends Stack {
             vpc: network.vpc
         });
 
-        // Jars custom resources for downloading all jars and uploading it to S3 bucket.
-        const jarsCustomResource = new JarsCustomResource(this, "JarsCustomResource", notebookCommon.notebookRole);
-
         // Spin up new notebook in VPC
         const managedFlinkNotebook = new ManagedFlinkNotebook(this, "app-in-vpc", {
             appName: Aws.STACK_NAME + "-notebook-in-vpc",
             glueDB: notebookCommon.glueDB,
             role: notebookCommon.notebookRole,
-            vpc: network.vpc,
-            bucket: jarsCustomResource.bucket
+            vpc: network.vpc
         });
-        managedFlinkNotebook.node.addDependency(jarsCustomResource.uploadJars);
         if (managedFlinkNotebook.applicationSecurityGroup) {
             serverlessDatabase.securityGroup.addIngressRule(managedFlinkNotebook.applicationSecurityGroup, Port.tcp(3306))
         }
