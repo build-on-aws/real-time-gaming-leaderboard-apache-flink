@@ -52,8 +52,7 @@ export class ManagedFlinkNotebookCommon extends Construct {
                             "logs:DescribeLogGroups",
                             "logs:DescribeLogStreams",
                             "logs:CreateLogGroup",
-                            "logs:CreateLogStream",
-                            "s3:GetObject"
+                            "logs:CreateLogStream"
                         ], resources: [
                             databaseArn,
                             "arn:aws:glue:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":database/hive",

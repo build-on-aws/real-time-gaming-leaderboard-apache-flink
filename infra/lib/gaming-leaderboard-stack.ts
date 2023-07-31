@@ -1,4 +1,4 @@
-import {Aws, Stack, StackProps} from 'aws-cdk-lib';
+import {Aws, CfnOutput, RemovalPolicy, Stack, StackProps} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {Stream, StreamEncryption, StreamMode} from "aws-cdk-lib/aws-kinesis";
 import {ManagedFlinkNotebookCommon} from "./constructs/managed-flink-notebook-common";
@@ -8,6 +8,7 @@ import {Network} from "./constructs/network";
 import {ServerlessDatabase} from "./constructs/serverlessDatabase";
 import {DatagenPlayers} from "./constructs/datagen/datagen-players";
 import {Port} from "aws-cdk-lib/aws-ec2";
+import {Bucket} from "aws-cdk-lib/aws-s3";
 
 export class GamingLeaderboardStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
@@ -50,6 +51,13 @@ export class GamingLeaderboardStack extends Stack {
             vpc: network.vpc
         });
 
+        // S3 bucket to upload all maven dependencies (jars) for MySQL CDC connector
+        const bucket = new Bucket(this, "bucket", {
+            removalPolicy: RemovalPolicy.DESTROY,
+            autoDeleteObjects: true
+        });
+        bucket.grantRead(notebookCommon.notebookRole, "*.jar");
+
         // Spin up new notebook in VPC
         const managedFlinkNotebook = new ManagedFlinkNotebook(this, "app-in-vpc", {
             appName: Aws.STACK_NAME + "-notebook-in-vpc",
@@ -60,6 +68,13 @@ export class GamingLeaderboardStack extends Stack {
         if (managedFlinkNotebook.applicationSecurityGroup) {
             serverlessDatabase.securityGroup.addIngressRule(managedFlinkNotebook.applicationSecurityGroup, Port.tcp(3306))
         }
+
+        new CfnOutput(this, "MySQLHost", {
+            value: serverlessDatabase.hostAddress
+        });
+        new CfnOutput(this, "SecretLink", {
+            value: "https://" + Aws.REGION + ".console.aws.amazon.com/secretsmanager/secret?name=" + serverlessDatabase.secret.secretName
+        });
 
     }
 }
