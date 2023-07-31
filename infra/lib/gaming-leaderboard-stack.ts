@@ -62,6 +62,7 @@ export class GamingLeaderboardStack extends Stack {
             vpc: network.vpc,
             bucket: jarsCustomResource.bucket
         });
+        managedFlinkNotebook.node.addDependency(jarsCustomResource.uploadJars);
         if (managedFlinkNotebook.applicationSecurityGroup) {
             serverlessDatabase.securityGroup.addIngressRule(managedFlinkNotebook.applicationSecurityGroup, Port.tcp(3306))
         }

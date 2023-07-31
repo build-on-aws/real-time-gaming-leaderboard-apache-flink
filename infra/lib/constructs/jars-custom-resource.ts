@@ -9,7 +9,7 @@ import path = require('path');
 export class JarsCustomResource extends Construct {
 
     readonly bucket: IBucket
-    readonly jarKeys: Array<string>
+    readonly uploadJars: CustomResource;
 
     constructor(scope: Construct, id: string, notebookRole: IRole) {
         super(scope, id);
@@ -21,24 +21,26 @@ export class JarsCustomResource extends Construct {
             removalPolicy: RemovalPolicy.DESTROY,
             autoDeleteObjects: true
         });
-        this.bucket.grantRead(notebookRole, "*.jar");
+        this.bucket.grantRead(notebookRole);
 
-        const provider = new Provider(this, 'ResourceProvider', {
-            onEventHandler: new Function(this, "custom-resource", {
-                code: Code.fromAsset(jarSyncFolder),
-                handler: "app.lambda_handler",
-                runtime: Runtime.PYTHON_3_9,
-                timeout: Duration.minutes(10),
-                environment: {
-                    "JARS_BUCKET": this.bucket.bucketName
-                }
-            })
+        const eventHandler = new Function(this, "custom-resource", {
+            code: Code.fromAsset(jarSyncFolder),
+            handler: "app.lambda_handler",
+            runtime: Runtime.PYTHON_3_9,
+            timeout: Duration.minutes(10),
+            environment: {
+                "JARS_BUCKET": this.bucket.bucketName
+            }
         });
 
-        const uploadJars = new CustomResource(this, 'UploadJars', {
+        this.bucket.grantWrite(eventHandler, "*.jar");
+        const provider = new Provider(this, 'ResourceProvider', {
+            onEventHandler: eventHandler
+        });
+
+        this.uploadJars = new CustomResource(this, 'UploadJars', {
             serviceToken: provider.serviceToken
         });
-        this.jarKeys = uploadJars.getAttString("jars").split(",");
     }
 
 }

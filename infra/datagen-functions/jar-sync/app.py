@@ -21,7 +21,8 @@ def on_create(event):
     for url in urls:
         response = http.request('GET', url)
         splits = url.split("/")
-        jars.append(splits[-1])
-        s3.put_object(Bucket=os.environ["JARS_BUCKET"], Key=splits[-1], Body=response.data)
+        jars.append(splits[-1].rstrip())
+        print(f"Uploading file {splits[-1].rstrip()} to {os.environ['JARS_BUCKET']}")
+        s3.put_object(Bucket=os.environ["JARS_BUCKET"], Key=splits[-1].rstrip(), Body=response.data)
     return {'PhysicalResourceId': os.environ["JARS_BUCKET"] + ":jars:" + str(len(urls)),
-            'Data': {"jars": ",".join(jars)}}
+            'Data': {"jars": jars}}
