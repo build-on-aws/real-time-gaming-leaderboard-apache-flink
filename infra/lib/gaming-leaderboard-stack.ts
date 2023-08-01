@@ -60,13 +60,5 @@ export class GamingLeaderboardStack extends Stack {
         if (managedFlinkNotebook.applicationSecurityGroup) {
             serverlessDatabase.securityGroup.addIngressRule(managedFlinkNotebook.applicationSecurityGroup, Port.tcp(3306))
         }
-
-        new CfnOutput(this, "MySQLHost", {
-            value: serverlessDatabase.hostAddress
-        });
-        new CfnOutput(this, "SecretLink", {
-            value: "https://" + Aws.REGION + ".console.aws.amazon.com/secretsmanager/secret?name=" + serverlessDatabase.secret.secretName
-        });
-
     }
 }

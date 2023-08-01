@@ -7,7 +7,8 @@ dependencies and shed plugin to create fat jar in target folder.
 Pre-built version of jar is committed already
 as [fat-jar-mysql-cdc-1.0-SNAPSHOT.jar](fat-jar-mysql-cdc-1.0-SNAPSHOT.jar)
 
-Jar is created using below command on JDK 20 runtime
+Jar is created using below command on JDK 20 runtime and will be pushed and referenced on the cloud in Studio
+environment.
 
 ```shell
 mvn clean package

@@ -1,9 +1,9 @@
 ﻿{
   "paragraphs": [
     {
-      "text": "%flink.ssql\n\nCREATE TABLE `events` (\n    `player_id` STRING,\n    `speed_kmph` BIGINT,\n    `distance_meters` BIGINT,\n    `event_time` TIMESTAMP(3),\n     WATERMARK FOR event_time AS event_time - INTERVAL '5' SECOND\n)\nWITH (\n    'connector' = 'kinesis', -- connect to the kinesis stream\n    'stream' = 'GamingLeaderboardStack-events',\n    'aws.region' = '[Enter AWS region name here]', -- example: eu-west-1\n    'scan.stream.initpos' = 'TRIM_HORIZON', -- read from the very beginning of the stream\n    'format' = 'json' -- source data in json format\n);\n",
+      "text": "%flink.ssql\n-- Note: Please run only one query at a time as Apache Flink SQL queries runs continuously on the data (as new row is added to the source table in time). Use pause (||) button at the right of each paragraph to stop all queries. ",
       "user": "anonymous",
-      "dateUpdated": "2023-07-27T17:14:49+0000",
+      "dateUpdated": "2023-08-01T10:38:37+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -25,17 +25,48 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1690478078662_357011998",
-      "id": "paragraph_1690478078662_357011998",
-      "dateCreated": "2023-07-27T17:14:38+0000",
+      "jobName": "paragraph_1690886156102_1343599895",
+      "id": "paragraph_1690886156102_1343599895",
+      "dateCreated": "2023-08-01T10:35:56+0000",
       "status": "READY",
       "focus": true,
-      "$$hashKey": "object:2583"
+      "$$hashKey": "object:194"
+    },
+    {
+      "text": "%flink.ssql\n\nCREATE TABLE `events` (\n    `player_id` STRING,\n    `speed_kmph` BIGINT,\n    `distance_meters` BIGINT,\n    `event_time` TIMESTAMP(3),\n     WATERMARK FOR event_time AS event_time - INTERVAL '5' SECOND\n)\nWITH (\n    'connector' = 'kinesis', -- connect to the kinesis stream\n    'stream' = 'GamingLeaderboardStack-events',\n    'aws.region' = '[Enter AWS region name here]', -- example: eu-west-1\n    'scan.stream.initpos' = 'TRIM_HORIZON', -- read from the very beginning of the stream\n    'format' = 'json' -- source data in json format\n);\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-07-31T08:55:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1690793751897_1110761273",
+      "id": "paragraph_1690478078662_357011998",
+      "dateCreated": "2023-07-31T08:55:51+0000",
+      "status": "READY",
+      "$$hashKey": "object:195"
     },
     {
       "text": "%flink.ssql(type=update)\n-- Challenge 1: select data from events table\n",
       "user": "anonymous",
-      "dateUpdated": "2023-07-27T17:14:57+0000",
+      "dateUpdated": "2023-07-31T08:55:51+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -57,16 +88,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1690478089140_320348584",
+      "jobName": "paragraph_1690793751898_1665728099",
       "id": "paragraph_1690478089140_320348584",
-      "dateCreated": "2023-07-27T17:14:49+0000",
+      "dateCreated": "2023-07-31T08:55:51+0000",
       "status": "READY",
-      "$$hashKey": "object:2584"
+      "$$hashKey": "object:196"
     },
     {
-      "text": "%flink.ssql(type=update)\n-- Drop table if it's invalid to re-create\n\nDROP TABLE events;",
+      "text": "%flink.ssql(type=update)\n-- Drop table and re-create when you change table definition\n\nDROP TABLE events;",
       "user": "anonymous",
-      "dateUpdated": "2023-07-27T17:15:03+0000",
+      "dateUpdated": "2023-08-01T10:35:46+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -88,15 +119,88 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1690478097256_87353116",
+      "jobName": "paragraph_1690793751898_893406984",
       "id": "paragraph_1690478097256_87353116",
-      "dateCreated": "2023-07-27T17:14:57+0000",
+      "dateCreated": "2023-07-31T08:55:51+0000",
       "status": "READY",
-      "$$hashKey": "object:2585"
+      "$$hashKey": "object:197"
+    },
+    {
+      "text": "%flink.ssql\n-- Create players table connected to the MySQL in CDC mode.\nCREATE TABLE `players` (\n    `player_id` STRING,\n    `alias` STRING,\n    `level` BIGINT,\n    `country` STRING,\n    `is_bot` INT,\n    `subscription_type` STRING,\n    PRIMARY KEY(player_id) NOT ENFORCED\n)\nWITH (\n    'connector' = 'mysql-cdc',\n    'hostname' = '', -- Enter host name here\n    'port' = '3306',\n    'username' = 'admin',\n    'password' = '', -- Enter password here\n    'database-name' = 'gaming',\n    'table-name' = 'players'\n);",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-01T10:24:21+0000",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Table has been created.\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1690794702548_2092136882",
+      "id": "paragraph_1690794702548_2092136882",
+      "dateCreated": "2023-07-31T09:11:42+0000",
+      "dateStarted": "2023-08-01T10:24:21+0000",
+      "dateFinished": "2023-08-01T10:24:22+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:201"
+    },
+    {
+      "text": "%flink.ssql(type=update)\n-- Challenge 2: Join MySQL CDC table and enrich event data with player information\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-01T07:32:18+0000",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1690875138774_1275356787",
+      "id": "paragraph_1690875138774_1275356787",
+      "dateCreated": "2023-08-01T07:32:18+0000",
+      "status": "READY",
+      "$$hashKey": "object:202"
     }
   ],
-  "name": "part-1-ingestion-setup",
-  "id": "2J6KH5NAG",
+  "name": "challenges",
+  "id": "2J93WAFKX",
   "defaultInterpreterGroup": "flink",
   "version": "0.10.1",
   "noteParams": {},
@@ -108,5 +212,5 @@
     "personalizedMode": "false"
   },
   "info": {},
-  "path": "/part-1-ingestion-setup"
+  "path": "/challenges"
 }

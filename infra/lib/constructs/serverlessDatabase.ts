@@ -12,7 +12,7 @@ import {
     UserData
 } from "aws-cdk-lib/aws-ec2";
 import {AuroraMysqlEngineVersion, ClusterInstance, DatabaseCluster, DatabaseClusterEngine} from "aws-cdk-lib/aws-rds";
-import {Aws, RemovalPolicy} from "aws-cdk-lib";
+import {Aws, CfnOutput, RemovalPolicy} from "aws-cdk-lib";
 import {ISecret, Secret} from "aws-cdk-lib/aws-secretsmanager";
 import {Asset} from "aws-cdk-lib/aws-s3-assets";
 
@@ -37,7 +37,7 @@ export class ServerlessDatabase extends Construct {
         });
 
         // Set variable to true to use Aurora MySQL as database.
-        const useAuroraMySQL = false;
+        const useAuroraMySQL = true;
 
         if (useAuroraMySQL) {
             const databaseCluster = new DatabaseCluster(this, "cluster", {
@@ -46,6 +46,7 @@ export class ServerlessDatabase extends Construct {
                 serverlessV2MinCapacity: 1,
                 serverlessV2MaxCapacity: 2,
                 vpc: props.vpc,
+                parameters: {"binlog_format": "ROW"},
                 defaultDatabaseName: "gaming",
                 removalPolicy: RemovalPolicy.DESTROY
             });
@@ -91,6 +92,12 @@ export class ServerlessDatabase extends Construct {
             this.hostAddress = instance.instancePrivateDnsName;
         }
 
+        new CfnOutput(this, "MySQLHost", {
+            value: this.hostAddress
+        });
+        new CfnOutput(this, "SecretLink", {
+            value: "https://" + Aws.REGION + ".console.aws.amazon.com/secretsmanager/secret?name=" + this.secret.secretName
+        });
 
     }
 }

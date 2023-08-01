@@ -15,19 +15,20 @@
         <maven.compiler.source>11</maven.compiler.source>
         <target.java.version>11</target.java.version>
         <java.version>11</java.version>
+        <kda.runtime.version>1.2.0</kda.runtime.version>
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.15.2</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.ververica</groupId>
             <artifactId>flink-connector-mysql-cdc</artifactId>
-            <version>2.3.0</version>
+            <version>2.4.1</version>
         </dependency>
     </dependencies>
 
@@ -49,7 +50,13 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <artifactSet>
                                 <excludes>
-                                    <exclude>org.apache.flink:force-shading</exclude>
+                                    <exclude>javax*</exclude>
+                                    <exclude>*glassfish*</exclude>
+                                    <exclude>ch.qos.reload4j:*</exclude>
+                                    <exclude>org.bitbucket:*</exclude>
+                                    <exclude>jakarta.*:*</exclude>
+                                    <exclude>org.eclipse.jetty:*</exclude>
+                                    <exclude>com.google.guava:*</exclude>
                                     <exclude>com.google.code.findbugs:jsr305</exclude>
                                     <exclude>org.slf4j:*</exclude>
                                     <exclude>log4j:*</exclude>
@@ -68,6 +75,12 @@
                                     </excludes>
                                 </filter>
                             </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.fasterxml.jackson</pattern>
+                                    <shadedPattern>shadow.com.fasterxml.jackson</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
