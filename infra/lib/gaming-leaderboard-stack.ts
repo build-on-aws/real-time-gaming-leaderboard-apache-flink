@@ -8,6 +8,8 @@ import {Network} from "./constructs/network";
 import {ServerlessDatabase} from "./constructs/serverless-database";
 import {DatagenPlayers} from "./constructs/datagen/datagen-players";
 import {Port} from "aws-cdk-lib/aws-ec2";
+import {MemorydbSync} from "./constructs/memorydb-sync";
+import {GrafanaDashboard} from "./constructs/grafana-dashboard";
 
 export class GamingLeaderboardStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
@@ -70,6 +72,13 @@ export class GamingLeaderboardStack extends Stack {
         });
         resultsStream.grantWrite(notebookCommon.notebookRole);
 
+        // Sync redis commands from results stream tp MemoryDB for Redis
+        const memorydbSync = new MemorydbSync(this, "MemorydbSync", {vpc: network.vpc, stream: resultsStream});
+        // Connect grafana to MemoryDB for Redis for the dashboard
+        new GrafanaDashboard(this, "GrafanaDashboard", {
+            vpc: network.vpc,
+            securityGroup: memorydbSync.redisSecurityGroup
+        });
 
 
     }

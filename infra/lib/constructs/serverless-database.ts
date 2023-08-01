@@ -93,10 +93,12 @@ export class ServerlessDatabase extends Construct {
         }
 
         new CfnOutput(this, "MySQLHost", {
-            value: this.hostAddress
+            value: this.hostAddress,
+            description: "MySQL host address"
         });
-        new CfnOutput(this, "SecretLink", {
-            value: "https://" + Aws.REGION + ".console.aws.amazon.com/secretsmanager/secret?name=" + this.secret.secretName
+        new CfnOutput(this, "MySQLCredentials", {
+            value: "https://" + Aws.REGION + ".console.aws.amazon.com/secretsmanager/secret?name=" + this.secret.secretName,
+            description: "MySQL credentials"
         });
 
     }
