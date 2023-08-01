@@ -1,9 +1,9 @@
 ﻿{
   "paragraphs": [
     {
-      "text": "%flink.ssql\n\nCREATE TABLE `events` (\n    `player_id` STRING,\n    `speed_kmph` BIGINT,\n    `distance_meters` BIGINT,\n    `event_time` TIMESTAMP(3),\n     WATERMARK FOR event_time AS event_time - INTERVAL '5' SECOND\n)\nWITH (\n    'connector' = 'kinesis', -- connect to the kinesis stream\n    'stream' = 'GamingLeaderboardStack-events',\n    'aws.region' = '[Enter AWS region name here]', -- example: eu-west-1\n    'scan.stream.initpos' = 'TRIM_HORIZON', -- read from the very beginning of the stream\n    'format' = 'json' -- source data in json format\n);\n",
+      "text": "%flink.ssql\n-- Note: Please run only one query at a time as Apache Flink SQL queries runs continuously on the data (as new row is added to the source table in time). Use pause (||) button at the right of each paragraph to stop all queries. ",
       "user": "anonymous",
-      "dateUpdated": "2023-07-27T17:15:27+0000",
+      "dateUpdated": "2023-08-01T10:42:10+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -25,17 +25,17 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1690478117126_1122405918",
-      "id": "paragraph_1690478117126_1122405918",
-      "dateCreated": "2023-07-27T17:15:17+0000",
+      "jobName": "paragraph_1690886530202_307390424",
+      "id": "paragraph_1690886156102_1343599895",
+      "dateCreated": "2023-08-01T10:42:10+0000",
       "status": "READY",
       "focus": true,
-      "$$hashKey": "object:2973"
+      "$$hashKey": "object:3176"
     },
     {
-      "text": "%flink.ssql(type=update)\n-- Challenge 1: select data from events table\nSELECT * FROM events",
+      "text": "%flink.ssql\n\nCREATE TABLE `events` (\n    `player_id` STRING,\n    `speed_kmph` BIGINT,\n    `distance_meters` BIGINT,\n    `event_time` TIMESTAMP(3),\n     WATERMARK FOR event_time AS event_time - INTERVAL '5' SECOND\n)\nWITH (\n    'connector' = 'kinesis', -- connect to the kinesis stream\n    'stream' = 'GamingLeaderboardStack-events',\n    'aws.region' = 'eu-west-1', -- example: eu-west-1\n    'scan.stream.initpos' = 'LATEST', -- read from the very beginning of the stream\n    'format' = 'json' -- source data in json format\n);\n",
       "user": "anonymous",
-      "dateUpdated": "2023-07-27T17:15:38+0000",
+      "dateUpdated": "2023-08-01T11:05:59+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -57,16 +57,122 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1690478127570_1218107699",
-      "id": "paragraph_1690478127570_1218107699",
-      "dateCreated": "2023-07-27T17:15:27+0000",
-      "status": "READY",
-      "$$hashKey": "object:2974"
+      "jobName": "paragraph_1690886530202_1401674656",
+      "id": "paragraph_1690478078662_357011998",
+      "dateCreated": "2023-08-01T10:42:10+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:3177",
+      "dateFinished": "2023-08-01T11:06:00+0000",
+      "dateStarted": "2023-08-01T11:05:59+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Table has been created.\n"
+          }
+        ]
+      }
     },
     {
-      "text": "%flink.ssql(type=update)\n-- Drop table if it's invalid to re-create\n\nDROP TABLE events;",
+      "text": "%flink.ssql(type=update)\n-- Challenge 1: select data from events table\nselect * from events\n",
       "user": "anonymous",
-      "dateUpdated": "2023-07-27T17:15:48+0000",
+      "dateUpdated": "2023-08-01T11:07:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "player_id": "string",
+                      "speed_kmph": "string",
+                      "distance_meters": "string",
+                      "event_time": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "FLINK JOB",
+          "tooltip": "View in Flink web UI",
+          "group": "flink",
+          "values": [
+            {
+              "jobUrl": "/flinkdashboard/#/job/fe453382734b2128139e08a03aedf61d",
+              "$$hashKey": "object:8753"
+            }
+          ],
+          "interpreterSettingId": "flink"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1690886530203_451747617",
+      "id": "paragraph_1690478089140_320348584",
+      "dateCreated": "2023-08-01T10:42:10+0000",
+      "status": "ABORT",
+      "$$hashKey": "object:3178",
+      "dateFinished": "2023-08-01T11:07:53+0000",
+      "dateStarted": "2023-08-01T11:07:28+0000",
+      "results": {
+        "code": "ERROR",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "player_id\tspeed_kmph\tdistance_meters\tevent_time\nplayer-1\t321\t40\t2023-08-01 11:07:13.775\nplayer-1\t298\t49\t2023-08-01 11:07:15.857\nplayer-1\t298\t49\t2023-08-01 11:07:15.857\nplayer-1\t299\t41\t2023-08-01 11:07:11.621\nplayer-1\t299\t41\t2023-08-01 11:07:11.621\nplayer-1\t321\t40\t2023-08-01 11:07:13.775\nplayer-2\t224\t41\t2023-08-01 11:07:18.978\nplayer-2\t236\t48\t2023-08-01 11:07:21.040\nplayer-2\t236\t48\t2023-08-01 11:07:21.040\nplayer-2\t152\t33\t2023-08-01 11:07:16.824\nplayer-2\t152\t33\t2023-08-01 11:07:16.824\nplayer-2\t224\t41\t2023-08-01 11:07:18.978\nplayer-3\t157\t14\t2023-08-01 11:07:23.999\nplayer-3\t175\t25\t2023-08-01 11:07:26.071\nplayer-3\t175\t25\t2023-08-01 11:07:26.071\nplayer-3\t345\t14\t2023-08-01 11:07:21.865\nplayer-3\t345\t14\t2023-08-01 11:07:21.865\nplayer-3\t157\t14\t2023-08-01 11:07:23.999\nplayer-4\t250\t28\t2023-08-01 11:07:29.016\nplayer-4\t196\t36\t2023-08-01 11:07:31.111\nplayer-4\t196\t36\t2023-08-01 11:07:31.111\nplayer-4\t271\t22\t2023-08-01 11:07:26.885\nplayer-4\t271\t22\t2023-08-01 11:07:26.885\nplayer-4\t250\t28\t2023-08-01 11:07:29.016\nplayer-5\t181\t12\t2023-08-01 11:07:34.034\nplayer-5\t349\t14\t2023-08-01 11:07:36.131\nplayer-5\t349\t14\t2023-08-01 11:07:36.131\nplayer-5\t159\t35\t2023-08-01 11:07:31.905\nplayer-5\t159\t35\t2023-08-01 11:07:31.905\nplayer-5\t181\t12\t2023-08-01 11:07:34.034\nplayer-6\t157\t48\t2023-08-01 11:07:36.925\nplayer-6\t334\t28\t2023-08-01 11:07:39.053\nplayer-6\t232\t26\t2023-08-01 11:07:41.171\nplayer-6\t232\t26\t2023-08-01 11:07:41.171\nplayer-6\t157\t48\t2023-08-01 11:07:36.925\nplayer-6\t157\t48\t2023-08-01 11:07:36.925\nplayer-6\t334\t28\t2023-08-01 11:07:39.053\nplayer-7\t331\t25\t2023-08-01 11:07:44.120\nplayer-7\t249\t28\t2023-08-01 11:07:46.211\nplayer-7\t249\t28\t2023-08-01 11:07:46.211\nplayer-7\t306\t46\t2023-08-01 11:07:41.942\nplayer-7\t306\t46\t2023-08-01 11:07:41.942\nplayer-7\t331\t25\t2023-08-01 11:07:44.120\nplayer-8\t246\t4\t2023-08-01 11:07:46.965\nplayer-8\t246\t4\t2023-08-01 11:07:46.965\nplayer-8\t229\t26\t2023-08-01 11:07:49.139\n"
+          },
+          {
+            "type": "TEXT",
+            "data": "Fail to run sql command: select * from events\n"
+          },
+          {
+            "type": "ANGULAR",
+            "data": "<div class='container ng-scope' style='padding-left:0px;padding-right:0px;'>\n    <div class='panel panel-danger'>\n        <div class='panel-heading' ng-click='isOpen=!isOpen' ng-init='isOpen=false' style=\"cursor:pointer\">\n            <div class='plainTextContainer' style='font-weight:bolder'><i class=\"fa fa-caret-right fa-fw\" style=\"padding-right:7px;transition:all 0.3s;{{isOpen?'transform:rotate(90deg);transform-origin:25% 45%':''}}\"></i>Job was cancelled.</div>\n        </div>\n        <div class='panel-collapse' uib-collapse='!isOpen'>\n            <div class='text' style='max-height:300px;overflow:auto;padding:10px'>java.lang.RuntimeException: Fail to run update type stream job\n\tat org.apache.zeppelin.flink.FlinkStreamSqlInterpreter.callInnerSelect(FlinkStreamSqlInterpreter.java:94)\n\tat org.apache.zeppelin.flink.FlinkStreamSqlInterpreter.lambda$open$0(FlinkStreamSqlInterpreter.java:49)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callStreamInnerSelect(Flink115SqlInterpreter.java:451)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callSelect(Flink115SqlInterpreter.java:435)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callOperation(Flink115SqlInterpreter.java:290)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.runSqlList(Flink115SqlInterpreter.java:236)\n\tat org.apache.zeppelin.flink.Flink115Shims.runSqlList(Flink115Shims.java:315)\n\tat org.apache.zeppelin.flink.FlinkStreamSqlInterpreter.runSqlList(FlinkStreamSqlInterpreter.java:103)\n\tat org.apache.zeppelin.flink.FlinkSqlInterpreter.internalInterpret(FlinkSqlInterpreter.java:63)\n\tat org.apache.zeppelin.interpreter.AbstractInterpreter.interpret(AbstractInterpreter.java:55)\n\tat org.apache.zeppelin.interpreter.LazyOpenInterpreter.interpret(LazyOpenInterpreter.java:110)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:860)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:752)\n\tat org.apache.zeppelin.scheduler.Job.run(Job.java:172)\n\tat org.apache.zeppelin.scheduler.AbstractScheduler.runJob(AbstractScheduler.java:132)\n\tat org.apache.zeppelin.scheduler.ParallelScheduler.lambda$runJobInScheduler$0(ParallelScheduler.java:46)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)\n\tat java.base/java.lang.Thread.run(Thread.java:829)\nCaused by: java.io.IOException: Fail to run stream sql job\n\tat org.apache.zeppelin.flink.sql.AbstractStreamSqlJob.run(AbstractStreamSqlJob.java:165)\n\tat org.apache.zeppelin.flink.sql.AbstractStreamSqlJob.run(AbstractStreamSqlJob.java:109)\n\tat org.apache.zeppelin.flink.FlinkStreamSqlInterpreter.callInnerSelect(FlinkStreamSqlInterpreter.java:92)\n\t... 18 more\nCaused by: java.util.concurrent.ExecutionException: org.apache.flink.table.api.TableException: Failed to wait job finish\n\tat java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)\n\tat java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1999)\n\tat org.apache.flink.table.api.internal.TableResultImpl.awaitInternal(TableResultImpl.java:118)\n\tat org.apache.flink.table.api.internal.TableResultImpl.await(TableResultImpl.java:81)\n\tat org.apache.zeppelin.flink.sql.AbstractStreamSqlJob.run(AbstractStreamSqlJob.java:154)\n\t... 20 more\nCaused by: org.apache.flink.table.api.TableException: Failed to wait job finish\n\tat org.apache.flink.table.api.internal.InsertResultProvider.hasNext(InsertResultProvider.java:85)\n\tat org.apache.flink.table.api.internal.InsertResultProvider.isFirstRowReady(InsertResultProvider.java:71)\n\tat org.apache.flink.table.api.internal.TableResultImpl.lambda$awaitInternal$1(TableResultImpl.java:105)\n\tat java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1736)\n\t... 3 more\nCaused by: java.util.concurrent.ExecutionException: org.apache.flink.client.program.ProgramInvocationException: Job failed (JobID: fe453382734b2128139e08a03aedf61d)\n\tat java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)\n\tat java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1999)\n\tat org.apache.flink.table.api.internal.InsertResultProvider.hasNext(InsertResultProvider.java:83)\n\t... 6 more\nCaused by: org.apache.flink.client.program.ProgramInvocationException: Job failed (JobID: fe453382734b2128139e08a03aedf61d)\n\tat org.apache.flink.client.deployment.ClusterClientJobClientAdapter.lambda$getJobExecutionResult$6(ClusterClientJobClientAdapter.java:130)\n\tat java.base/java.util.concurrent.CompletableFuture$UniApply.tryFire(CompletableFuture.java:642)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.util.concurrent.FutureUtils.lambda$retryOperationWithDelay$9(FutureUtils.java:403)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.client.program.rest.RestClusterClient.lambda$pollResourceAsync$26(RestClusterClient.java:708)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.util.concurrent.FutureUtils.lambda$retryOperationWithDelay$9(FutureUtils.java:403)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.postFire(CompletableFuture.java:610)\n\tat java.base/java.util.concurrent.CompletableFuture$UniCompose.tryFire(CompletableFuture.java:1085)\n\tat java.base/java.util.concurrent.CompletableFuture$Completion.run(CompletableFuture.java:478)\n\t... 3 more\nCaused by: org.apache.flink.runtime.client.JobCancellationException: Job was cancelled.\n\tat org.apache.flink.runtime.jobmaster.JobResult.toJobExecutionResult(JobResult.java:146)\n\tat org.apache.flink.client.deployment.ClusterClientJobClientAdapter.lambda$getJobExecutionResult$6(ClusterClientJobClientAdapter.java:128)\n\t... 23 more\n</div>\n        </div>\n    </div>\n</div>\n"
+          }
+        ]
+      }
+    },
+    {
+      "text": "%flink.ssql(type=update)\n-- Drop table and re-create when you change table definition\n\n-- DROP TABLE events;",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-01T11:07:48+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -88,15 +194,199 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1690478145110_1561640274",
-      "id": "paragraph_1690478145110_1561640274",
-      "dateCreated": "2023-07-27T17:15:45+0000",
+      "jobName": "paragraph_1690886530204_1600778566",
+      "id": "paragraph_1690478097256_87353116",
+      "dateCreated": "2023-08-01T10:42:10+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:3179",
+      "dateFinished": "2023-08-01T11:05:47+0000",
+      "dateStarted": "2023-08-01T11:05:45+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Table has been dropped.\n"
+          }
+        ]
+      }
+    },
+    {
+      "text": "%flink.ssql\n-- Create players table connected to the MySQL in CDC mode.\nCREATE TABLE `players` (\n    `player_id` STRING,\n    `alias` STRING,\n    `level` BIGINT,\n    `country` STRING,\n    `is_bot` INT,\n    `subscription_type` STRING,\n    PRIMARY KEY(player_id) NOT ENFORCED\n)\nWITH (\n    'connector' = 'mysql-cdc',\n    'hostname' = '', -- Enter host name here\n    'port' = '3306',\n    'username' = 'admin',\n    'password' = '', -- Enter password here\n    'database-name' = 'gaming',\n    'table-name' = 'players'\n);",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-01T10:42:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Table has been created.\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1690886530204_1168335618",
+      "id": "paragraph_1690794702548_2092136882",
+      "dateCreated": "2023-08-01T10:42:10+0000",
       "status": "READY",
-      "$$hashKey": "object:2975"
+      "$$hashKey": "object:3180"
+    },
+    {
+      "text": "%flink.ssql(type=update)\n-- Challenge 2: Join MySQL CDC table and enrich event data with player information\nSELECT * from events e JOIN players p on e.player_id = p.player_id\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-01T11:06:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "player_id": "string",
+                      "speed_kmph": "string",
+                      "distance_meters": "string",
+                      "event_time": "string",
+                      "player_id0": "string",
+                      "alias": "string",
+                      "level": "string",
+                      "country": "string",
+                      "is_bot": "string",
+                      "subscription_type": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "FLINK JOB",
+          "tooltip": "View in Flink web UI",
+          "group": "flink",
+          "values": [
+            {
+              "jobUrl": "/flinkdashboard/#/job/aa35e77558e87e15ba57536b667f2a90",
+              "$$hashKey": "object:7108"
+            }
+          ],
+          "interpreterSettingId": "flink"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1690886530204_1843740153",
+      "id": "paragraph_1690875138774_1275356787",
+      "dateCreated": "2023-08-01T10:42:10+0000",
+      "status": "ABORT",
+      "$$hashKey": "object:3181",
+      "dateFinished": "2023-08-01T11:06:54+0000",
+      "dateStarted": "2023-08-01T11:06:05+0000",
+      "results": {
+        "code": "ERROR",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "player_id\tspeed_kmph\tdistance_meters\tevent_time\tplayer_id0\talias\tlevel\tcountry\tis_bot\tsubscription_type\nplayer-1\t216\t27\t2023-08-01 11:05:59.924\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t348\t30\t2023-08-01 11:06:11.547\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t348\t30\t2023-08-01 11:06:11.547\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t182\t32\t2023-08-01 11:06:16.810\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t216\t27\t2023-08-01 11:05:59.924\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t348\t30\t2023-08-01 11:06:11.547\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t348\t30\t2023-08-01 11:06:11.547\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t182\t32\t2023-08-01 11:06:16.810\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t182\t32\t2023-08-01 11:06:16.810\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t216\t27\t2023-08-01 11:05:59.924\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t348\t30\t2023-08-01 11:06:11.547\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t348\t30\t2023-08-01 11:06:11.547\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t182\t32\t2023-08-01 11:06:16.810\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t216\t27\t2023-08-01 11:05:59.924\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t348\t30\t2023-08-01 11:06:11.547\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t348\t30\t2023-08-01 11:06:11.547\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-1\t182\t32\t2023-08-01 11:06:16.810\tplayer-1\tfast-devil-56\t10\tBE\t0\tFree\nplayer-10\t219\t46\t2023-08-01 11:06:45.341\tplayer-10\tcool-rock-77\t6\tFR\t0\tSilver\nplayer-2\t213\t5\t2023-08-01 11:06:05.105\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t290\t43\t2023-08-01 11:06:16.788\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t290\t43\t2023-08-01 11:06:16.788\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t331\t28\t2023-08-01 11:06:22.004\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t213\t5\t2023-08-01 11:06:05.105\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t290\t43\t2023-08-01 11:06:16.788\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t290\t43\t2023-08-01 11:06:16.788\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t331\t28\t2023-08-01 11:06:22.004\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t331\t28\t2023-08-01 11:06:22.004\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t213\t5\t2023-08-01 11:06:05.105\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t290\t43\t2023-08-01 11:06:16.788\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t290\t43\t2023-08-01 11:06:16.788\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t331\t28\t2023-08-01 11:06:22.004\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t213\t5\t2023-08-01 11:06:05.105\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t290\t43\t2023-08-01 11:06:16.788\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t290\t43\t2023-08-01 11:06:16.788\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-2\t331\t28\t2023-08-01 11:06:22.004\tplayer-2\trunning-superman-66\t4\tBE\t1\tFree\nplayer-3\t323\t22\t2023-08-01 11:06:10.148\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t189\t11\t2023-08-01 11:06:21.830\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t189\t11\t2023-08-01 11:06:21.830\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t304\t50\t2023-08-01 11:06:27.037\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t323\t22\t2023-08-01 11:06:10.148\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t189\t11\t2023-08-01 11:06:21.830\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t189\t11\t2023-08-01 11:06:21.830\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t304\t50\t2023-08-01 11:06:27.037\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t304\t50\t2023-08-01 11:06:27.037\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t323\t22\t2023-08-01 11:06:10.148\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t189\t11\t2023-08-01 11:06:21.830\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t189\t11\t2023-08-01 11:06:21.830\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t304\t50\t2023-08-01 11:06:27.037\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t323\t22\t2023-08-01 11:06:10.148\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t189\t11\t2023-08-01 11:06:21.830\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t189\t11\t2023-08-01 11:06:21.830\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-3\t304\t50\t2023-08-01 11:06:27.037\tplayer-3\thot-car-81\t9\tFR\t0\tGold\nplayer-4\t251\t19\t2023-08-01 11:06:15.165\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t176\t50\t2023-08-01 11:06:26.850\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t176\t50\t2023-08-01 11:06:26.850\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t339\t9\t2023-08-01 11:06:32.065\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t251\t19\t2023-08-01 11:06:15.165\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t176\t50\t2023-08-01 11:06:26.850\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t176\t50\t2023-08-01 11:06:26.850\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t339\t9\t2023-08-01 11:06:32.065\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t339\t9\t2023-08-01 11:06:32.065\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t251\t19\t2023-08-01 11:06:15.165\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t176\t50\t2023-08-01 11:06:26.850\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t176\t50\t2023-08-01 11:06:26.850\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t339\t9\t2023-08-01 11:06:32.065\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t251\t19\t2023-08-01 11:06:15.165\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t176\t50\t2023-08-01 11:06:26.850\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t176\t50\t2023-08-01 11:06:26.850\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-4\t339\t9\t2023-08-01 11:06:32.065\tplayer-4\tfunny-john-78\t10\tIN\t0\t7d-Trial\nplayer-5\t213\t34\t2023-08-01 11:06:20.211\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t201\t2\t2023-08-01 11:06:31.909\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t201\t2\t2023-08-01 11:06:31.909\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t213\t34\t2023-08-01 11:06:20.211\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t201\t2\t2023-08-01 11:06:31.909\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t201\t2\t2023-08-01 11:06:31.909\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t261\t41\t2023-08-01 11:06:37.084\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t261\t41\t2023-08-01 11:06:37.084\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t213\t34\t2023-08-01 11:06:20.211\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t201\t2\t2023-08-01 11:06:31.909\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t201\t2\t2023-08-01 11:06:31.909\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t261\t41\t2023-08-01 11:06:37.084\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t213\t34\t2023-08-01 11:06:20.211\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t201\t2\t2023-08-01 11:06:31.909\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t201\t2\t2023-08-01 11:06:31.909\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-5\t261\t41\t2023-08-01 11:06:37.084\tplayer-5\tfast-racer-75\t6\tFR\t0\t7d-Trial\nplayer-6\t329\t3\t2023-08-01 11:06:25.228\tplayer-6\tcool-john-28\t7\tIN\t0\t7d-Trial\nplayer-6\t329\t3\t2023-08-01 11:06:25.228\tplayer-6\tcool-john-28\t7\tIN\t0\t7d-Trial\nplayer-6\t283\t15\t2023-08-01 11:06:36.949\tplayer-6\tcool-john-28\t7\tIN\t0\t7d-Trial\nplayer-6\t283\t15\t2023-08-01 11:06:36.949\tplayer-6\tcool-john-28\t7\tIN\t0\t7d-Trial\nplayer-6\t329\t3\t2023-08-01 11:06:25.228\tplayer-6\tcool-john-28\t7\tIN\t0\t7d-Trial\nplayer-6\t283\t15\t2023-08-01 11:06:36.949\tplayer-6\tcool-john-28\t7\tIN\t0\t7d-Trial\nplayer-6\t283\t15\t2023-08-01 11:06:36.949\tplayer-6\tcool-john-28\t7\tIN\t0\t7d-Trial\nplayer-6\t173\t32\t2023-08-01 11:06:42.125\tplayer-6\tcool-john-28\t7\tIN\t0\t7d-Trial\nplayer-6\t329\t3\t2023-08-01 11:06:25.228\tplayer-6\tcool-john-28\t7\tIN\t0\t7d-Trial\nplayer-6\t283\t15\t2023-08-01 11:06:36.949\tplayer-6\tcool-john-28\t7\tIN\t0\t7d-Trial\nplayer-6\t283\t15\t2023-08-01 11:06:36.949\tplayer-6\tcool-john-28\t7\tIN\t0\t7d-Trial\nplayer-6\t173\t32\t2023-08-01 11:06:42.125\tplayer-6\tcool-john-28\t7\tIN\t0\t7d-Trial\nplayer-7\t231\t7\t2023-08-01 11:06:30.285\tplayer-7\thot-rock-25\t6\tFR\t0\tSilver\nplayer-7\t231\t7\t2023-08-01 11:06:30.285\tplayer-7\thot-rock-25\t6\tFR\t0\tSilver\nplayer-7\t231\t7\t2023-08-01 11:06:30.285\tplayer-7\thot-rock-25\t6\tFR\t0\tSilver\nplayer-7\t329\t39\t2023-08-01 11:06:42.009\tplayer-7\thot-rock-25\t6\tFR\t0\tSilver\nplayer-7\t329\t39\t2023-08-01 11:06:42.009\tplayer-7\thot-rock-25\t6\tFR\t0\tSilver\nplayer-7\t231\t7\t2023-08-01 11:06:30.285\tplayer-7\thot-rock-25\t6\tFR\t0\tSilver\nplayer-7\t329\t39\t2023-08-01 11:06:42.009\tplayer-7\thot-rock-25\t6\tFR\t0\tSilver\nplayer-7\t329\t39\t2023-08-01 11:06:42.009\tplayer-7\thot-rock-25\t6\tFR\t0\tSilver\nplayer-7\t244\t39\t2023-08-01 11:06:47.144\tplayer-7\thot-rock-25\t6\tFR\t0\tSilver\nplayer-8\t225\t50\t2023-08-01 11:06:35.305\tplayer-8\tspeedy-superman-92\t3\tUS\t0\tFree\nplayer-8\t225\t50\t2023-08-01 11:06:35.305\tplayer-8\tspeedy-superman-92\t3\tUS\t0\tFree\nplayer-8\t225\t50\t2023-08-01 11:06:35.305\tplayer-8\tspeedy-superman-92\t3\tUS\t0\tFree\nplayer-8\t339\t20\t2023-08-01 11:06:47.070\tplayer-8\tspeedy-superman-92\t3\tUS\t0\tFree\nplayer-8\t339\t20\t2023-08-01 11:06:47.070\tplayer-8\tspeedy-superman-92\t3\tUS\t0\tFree\nplayer-9\t318\t22\t2023-08-01 11:06:40.325\tplayer-9\tfast-buddy-80\t6\tFR\t1\tDiamond\nplayer-9\t318\t22\t2023-08-01 11:06:40.325\tplayer-9\tfast-buddy-80\t6\tFR\t1\tDiamond\n"
+          },
+          {
+            "type": "TEXT",
+            "data": "Fail to run sql command: SELECT * from events e JOIN players p on e.player_id = p.player_id\n"
+          },
+          {
+            "type": "ANGULAR",
+            "data": "<div class='container ng-scope' style='padding-left:0px;padding-right:0px;'>\n    <div class='panel panel-danger'>\n        <div class='panel-heading' ng-click='isOpen=!isOpen' ng-init='isOpen=false' style=\"cursor:pointer\">\n            <div class='plainTextContainer' style='font-weight:bolder'><i class=\"fa fa-caret-right fa-fw\" style=\"padding-right:7px;transition:all 0.3s;{{isOpen?'transform:rotate(90deg);transform-origin:25% 45%':''}}\"></i>Job was cancelled.</div>\n        </div>\n        <div class='panel-collapse' uib-collapse='!isOpen'>\n            <div class='text' style='max-height:300px;overflow:auto;padding:10px'>java.lang.RuntimeException: Fail to run update type stream job\n\tat org.apache.zeppelin.flink.FlinkStreamSqlInterpreter.callInnerSelect(FlinkStreamSqlInterpreter.java:94)\n\tat org.apache.zeppelin.flink.FlinkStreamSqlInterpreter.lambda$open$0(FlinkStreamSqlInterpreter.java:49)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callStreamInnerSelect(Flink115SqlInterpreter.java:451)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callSelect(Flink115SqlInterpreter.java:435)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callOperation(Flink115SqlInterpreter.java:290)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.runSqlList(Flink115SqlInterpreter.java:236)\n\tat org.apache.zeppelin.flink.Flink115Shims.runSqlList(Flink115Shims.java:315)\n\tat org.apache.zeppelin.flink.FlinkStreamSqlInterpreter.runSqlList(FlinkStreamSqlInterpreter.java:103)\n\tat org.apache.zeppelin.flink.FlinkSqlInterpreter.internalInterpret(FlinkSqlInterpreter.java:63)\n\tat org.apache.zeppelin.interpreter.AbstractInterpreter.interpret(AbstractInterpreter.java:55)\n\tat org.apache.zeppelin.interpreter.LazyOpenInterpreter.interpret(LazyOpenInterpreter.java:110)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:860)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:752)\n\tat org.apache.zeppelin.scheduler.Job.run(Job.java:172)\n\tat org.apache.zeppelin.scheduler.AbstractScheduler.runJob(AbstractScheduler.java:132)\n\tat org.apache.zeppelin.scheduler.ParallelScheduler.lambda$runJobInScheduler$0(ParallelScheduler.java:46)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)\n\tat java.base/java.lang.Thread.run(Thread.java:829)\nCaused by: java.io.IOException: Fail to run stream sql job\n\tat org.apache.zeppelin.flink.sql.AbstractStreamSqlJob.run(AbstractStreamSqlJob.java:165)\n\tat org.apache.zeppelin.flink.sql.AbstractStreamSqlJob.run(AbstractStreamSqlJob.java:109)\n\tat org.apache.zeppelin.flink.FlinkStreamSqlInterpreter.callInnerSelect(FlinkStreamSqlInterpreter.java:92)\n\t... 18 more\nCaused by: java.util.concurrent.ExecutionException: org.apache.flink.table.api.TableException: Failed to wait job finish\n\tat java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)\n\tat java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1999)\n\tat org.apache.flink.table.api.internal.TableResultImpl.awaitInternal(TableResultImpl.java:118)\n\tat org.apache.flink.table.api.internal.TableResultImpl.await(TableResultImpl.java:81)\n\tat org.apache.zeppelin.flink.sql.AbstractStreamSqlJob.run(AbstractStreamSqlJob.java:154)\n\t... 20 more\nCaused by: org.apache.flink.table.api.TableException: Failed to wait job finish\n\tat org.apache.flink.table.api.internal.InsertResultProvider.hasNext(InsertResultProvider.java:85)\n\tat org.apache.flink.table.api.internal.InsertResultProvider.isFirstRowReady(InsertResultProvider.java:71)\n\tat org.apache.flink.table.api.internal.TableResultImpl.lambda$awaitInternal$1(TableResultImpl.java:105)\n\tat java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1736)\n\t... 3 more\nCaused by: java.util.concurrent.ExecutionException: org.apache.flink.client.program.ProgramInvocationException: Job failed (JobID: aa35e77558e87e15ba57536b667f2a90)\n\tat java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)\n\tat java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1999)\n\tat org.apache.flink.table.api.internal.InsertResultProvider.hasNext(InsertResultProvider.java:83)\n\t... 6 more\nCaused by: org.apache.flink.client.program.ProgramInvocationException: Job failed (JobID: aa35e77558e87e15ba57536b667f2a90)\n\tat org.apache.flink.client.deployment.ClusterClientJobClientAdapter.lambda$getJobExecutionResult$6(ClusterClientJobClientAdapter.java:130)\n\tat java.base/java.util.concurrent.CompletableFuture$UniApply.tryFire(CompletableFuture.java:642)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.util.concurrent.FutureUtils.lambda$retryOperationWithDelay$9(FutureUtils.java:403)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.client.program.rest.RestClusterClient.lambda$pollResourceAsync$26(RestClusterClient.java:708)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.util.concurrent.FutureUtils.lambda$retryOperationWithDelay$9(FutureUtils.java:403)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.postFire(CompletableFuture.java:610)\n\tat java.base/java.util.concurrent.CompletableFuture$UniCompose.tryFire(CompletableFuture.java:1085)\n\tat java.base/java.util.concurrent.CompletableFuture$Completion.run(CompletableFuture.java:478)\n\t... 3 more\nCaused by: org.apache.flink.runtime.client.JobCancellationException: Job was cancelled.\n\tat org.apache.flink.runtime.jobmaster.JobResult.toJobExecutionResult(JobResult.java:146)\n\tat org.apache.flink.client.deployment.ClusterClientJobClientAdapter.lambda$getJobExecutionResult$6(ClusterClientJobClientAdapter.java:128)\n\t... 23 more\n</div>\n        </div>\n    </div>\n</div>\n"
+          }
+        ]
+      }
+    },
+    {
+      "text": "%flink.ssql\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-01T11:05:24+0000",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1690887924029_1239775877",
+      "id": "paragraph_1690887924029_1239775877",
+      "dateCreated": "2023-08-01T11:05:24+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:3613"
     }
   ],
-  "name": "part-1-ingestion-answer",
-  "id": "2J7AJ4WTG",
+  "name": "answers",
+  "id": "2J7AZSB8T",
   "defaultInterpreterGroup": "flink",
   "version": "0.10.1",
   "noteParams": {},
@@ -108,5 +398,5 @@
     "personalizedMode": "false"
   },
   "info": {},
-  "path": "/part-1-ingestion-answer"
+  "path": "/answers"
 }
