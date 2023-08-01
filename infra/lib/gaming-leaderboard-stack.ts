@@ -1,11 +1,11 @@
-import {Aws, CfnOutput, Stack, StackProps} from 'aws-cdk-lib';
+import {Aws, Stack, StackProps} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {Stream, StreamEncryption, StreamMode} from "aws-cdk-lib/aws-kinesis";
 import {ManagedFlinkNotebookCommon} from "./constructs/managed-flink-notebook-common";
 import {DatagenEvents} from "./constructs/datagen/datagen-events";
 import {ManagedFlinkNotebook} from "./constructs/managed-flink-notebook";
 import {Network} from "./constructs/network";
-import {ServerlessDatabase} from "./constructs/serverlessDatabase";
+import {ServerlessDatabase} from "./constructs/serverless-database";
 import {DatagenPlayers} from "./constructs/datagen/datagen-players";
 import {Port} from "aws-cdk-lib/aws-ec2";
 
@@ -60,5 +60,17 @@ export class GamingLeaderboardStack extends Stack {
         if (managedFlinkNotebook.applicationSecurityGroup) {
             serverlessDatabase.securityGroup.addIngressRule(managedFlinkNotebook.applicationSecurityGroup, Port.tcp(3306))
         }
+
+        // ------------------- Part 3: Gaming leaderboard processing, storage and visual dashboard -------------------
+        // Kinesis Data Stream results
+        const resultsStream = new Stream(this, 'results', {
+            streamName: Aws.STACK_NAME + "-results",
+            streamMode: StreamMode.ON_DEMAND,
+            encryption: StreamEncryption.MANAGED
+        });
+        resultsStream.grantWrite(notebookCommon.notebookRole);
+
+
+
     }
 }

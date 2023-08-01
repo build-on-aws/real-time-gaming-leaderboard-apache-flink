@@ -18,7 +18,7 @@ export class DatagenEvents extends Construct {
     constructor(scope: Construct, id: string, props: DatagenEventsProps) {
         super(scope, id);
 
-        const datagenEventsFolder: string = path.join(__dirname, '../../../datagen-functions/events');
+        const datagenEventsFolder: string = path.join(__dirname, '../../../functions/events');
 
         // Lambda function data generator
         const dataGenFn = new Function(this, 'fn', {

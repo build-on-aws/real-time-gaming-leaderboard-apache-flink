@@ -37,7 +37,7 @@ export class ServerlessDatabase extends Construct {
         });
 
         // Set variable to true to use Aurora MySQL as database.
-        const useAuroraMySQL = true;
+        const useAuroraMySQL = false;
 
         if (useAuroraMySQL) {
             const databaseCluster = new DatabaseCluster(this, "cluster", {

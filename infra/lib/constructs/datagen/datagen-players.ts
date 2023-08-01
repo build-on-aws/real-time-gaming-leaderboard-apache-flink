@@ -21,7 +21,7 @@ export class DatagenPlayers extends Construct {
     constructor(scope: Construct, id: string, props: DataGenPlayersProps) {
         super(scope, id);
 
-        const playersFnFolder: string = path.join(__dirname, '../../../datagen-functions/players');
+        const playersFnFolder: string = path.join(__dirname, '../../../functions/players');
 
         // Lambda function data generator
         const dataGenFn = new Function(this, 'fn', {
