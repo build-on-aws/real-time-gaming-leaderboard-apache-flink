@@ -10,6 +10,7 @@ import {DatagenPlayers} from "./constructs/datagen/datagen-players";
 import {Port} from "aws-cdk-lib/aws-ec2";
 import {MemorydbSync} from "./constructs/memorydb-sync";
 import {GrafanaDashboard} from "./constructs/grafana-dashboard";
+import {DatagenPublish} from "./constructs/datagen/datagen-publish";
 
 export class GamingLeaderboardStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
@@ -80,6 +81,17 @@ export class GamingLeaderboardStack extends Stack {
             securityGroup: memorydbSync.redisSecurityGroup
         });
 
+        // ------------------- Part 4: Dynamic config -------------------
+        // Kinesis Data Stream dynamic config
+        const configStream = new Stream(this, 'config', {
+            streamName: Aws.STACK_NAME + "-config",
+            streamMode: StreamMode.PROVISIONED,
+            shardCount: 1,
+            encryption: StreamEncryption.MANAGED
+        });
+        configStream.grantRead(notebookCommon.notebookRole);
 
+        // Publish function for pushing new event to control channel
+        new DatagenPublish(this, "DatagenPublish");
     }
 }
