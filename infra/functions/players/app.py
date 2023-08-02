@@ -57,7 +57,10 @@ def lambda_handler(event, context):
                                       names[random.randint(0, len(prefix) - 1)],
                                       random.randint(1, 100))
             level = random.randint(1, 10)
-            country = countries[random.randint(0, len(countries) - 1)]
+            country_index = random.randint(0, 2)
+            if country_index == 2:
+                country_index = random.randint(0, len(countries) - 1)
+            country = countries[country_index]
             is_bot = random.randint(0, 1)
             subscription_type = subscription_types[random.randint(0, len(subscription_types) - 1)]
             sql_string = f"INSERT IGNORE INTO players (player_id, alias, level, country, is_bot, subscription_type) " \
