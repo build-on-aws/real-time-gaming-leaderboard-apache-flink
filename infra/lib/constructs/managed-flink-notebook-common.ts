@@ -52,7 +52,13 @@ export class ManagedFlinkNotebookCommon extends Construct {
                             "logs:DescribeLogGroups",
                             "logs:DescribeLogStreams",
                             "logs:CreateLogGroup",
-                            "logs:CreateLogStream"
+                            "logs:CreateLogStream",
+                            "kinesis:DescribeStream*",
+                            "kinesis:GetRecords",
+                            "kinesis:GetShardIterator",
+                            "kinesis:ListShards",
+                            "kinesis:ListStreams",
+                            "kinesis:SubscribeToShard"
                         ], resources: [
                             databaseArn,
                             "arn:aws:glue:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":database/hive",
@@ -61,7 +67,8 @@ export class ManagedFlinkNotebookCommon extends Construct {
                             "arn:aws:glue:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":userDefinedFunction/" + this.glueDB.ref + "/*",
                             "arn:aws:logs:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":log-group:*",
                             "arn:aws:logs:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":log-group:*:*",
-                            "arn:aws:logs:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":log-group:*:log-stream:*"
+                            "arn:aws:logs:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":log-group:*:log-stream:*",
+                            "arn:aws:kinesis:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":stream/" + Aws.STACK_NAME + "-*"
                         ]
                     })]
                 })

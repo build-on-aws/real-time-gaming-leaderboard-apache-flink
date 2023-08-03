@@ -29,7 +29,6 @@ export class GamingLeaderboardStack extends Stack {
 
         // Notebook common role for you to use.
         const notebookCommon = new ManagedFlinkNotebookCommon(this, "notebook-common");
-        eventsStream.grantRead(notebookCommon.notebookRole);
 
         // ------------------- Part 1: Ingestion Challenge Completed -------------------
         // Spin up new notebook
@@ -83,15 +82,22 @@ export class GamingLeaderboardStack extends Stack {
 
         // ------------------- Part 4: Dynamic config -------------------
         // Kinesis Data Stream dynamic config
-        const configStream = new Stream(this, 'config', {
+        new Stream(this, 'config', {
             streamName: Aws.STACK_NAME + "-config",
             streamMode: StreamMode.PROVISIONED,
             shardCount: 1,
             encryption: StreamEncryption.MANAGED
         });
-        configStream.grantRead(notebookCommon.notebookRole);
 
         // Publish function for pushing new event to control channel
         new DatagenPublish(this, "DatagenPublish");
+
+        // ------------------- Part 5: Archival and Replay -------------------
+        // Create new stream from the console or run below code to auto complete setup
+        new Stream(this, 'replay', {
+            streamName: Aws.STACK_NAME + "-replay",
+            streamMode: StreamMode.ON_DEMAND,
+            encryption: StreamEncryption.MANAGED
+        });
     }
 }
