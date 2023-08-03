@@ -94,10 +94,11 @@ export class GamingLeaderboardStack extends Stack {
 
         // ------------------- Part 5: Archival and Replay -------------------
         // Create new stream from the console or run below code to auto complete setup
-        new Stream(this, 'replay', {
+        const replayStream = new Stream(this, 'replay', {
             streamName: Aws.STACK_NAME + "-replay",
             streamMode: StreamMode.ON_DEMAND,
             encryption: StreamEncryption.MANAGED
         });
+        replayStream.grantWrite(notebookCommon.notebookRole);
     }
 }
