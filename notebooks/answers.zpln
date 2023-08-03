@@ -30,7 +30,7 @@
       "dateCreated": "2023-08-01T16:09:57+0000",
       "status": "READY",
       "focus": true,
-      "$$hashKey": "object:299"
+      "$$hashKey": "object:53"
     },
     {
       "text": "%flink.pyflink\n# Cancel ALL Running Queries\nimport requests\n\nr = requests.get(\"https://zeppelin-flink:8082/jobs\", verify=False)\njobs = r.json()['jobs']\nprint(jobs)\n\nfor job in jobs:\n    if (job[\"status\"] == \"RUNNING\"):\n        print(requests.patch(\"https://zeppelin-flink:8082/jobs/{}\".format(job[\"id\"]), verify=False))",
@@ -54,15 +54,6 @@
         "params": {},
         "forms": {}
       },
-      "results": {
-        "code": "SUCCESS",
-        "msg": [
-          {
-            "type": "TEXT",
-            "data": "[{'id': '92654703353937b763100222536e4753', 'status': 'FAILED'}, {'id': '9dfe2443e836c22b5d7156f212fd4b00', 'status': 'FINISHED'}]\n/opt/conda/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'zeppelin-flink'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings\n  warnings.warn(\n"
-          }
-        ]
-      },
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
@@ -72,7 +63,7 @@
       "dateStarted": "2023-08-03T16:43:04+0000",
       "dateFinished": "2023-08-03T16:43:05+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:300"
+      "$$hashKey": "object:54"
     },
     {
       "text": "%flink.ssql\n-- Part 1: Streaming ingestion.\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/connectors/table/kinesis/\nDROP TABLE IF EXISTS `events`;\nCREATE TABLE `events` (\n    `player_id` STRING,\n    `speed_kmph` BIGINT,\n    `distance_meters` BIGINT,\n    `event_time` TIMESTAMP(3),\n    `event_time_tz` AS CAST(event_time AS TIMESTAMP_LTZ(3)),\n     WATERMARK FOR event_time_tz AS event_time_tz - INTERVAL '5' SECOND\n)\nWITH (\n    'connector' = 'kinesis', -- connect to the kinesis stream\n    'stream' = 'GamingLeaderboardStack-events',\n    'aws.region' = 'eu-west-1', -- example: eu-west-1\n    'scan.stream.initpos' = 'LATEST', -- read from the end of the stream\n    'format' = 'json' -- source data in json format\n);\n",
@@ -114,12 +105,12 @@
       "dateStarted": "2023-08-03T16:43:19+0000",
       "dateFinished": "2023-08-03T16:43:22+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:301"
+      "$$hashKey": "object:55"
     },
     {
-      "text": "%flink.ssql(type=update)\n-- Part 1: Streaming ingestion reading data from kinesis source stream (Populated by DataGenerator constantly)\n-- Challenge 1: select data from events table\nselect * from events\n",
+      "text": "%flink.ssql(type=update)\n-- Part 1: Streaming ingestion reading data from kinesis source stream (Populated by DataGenerator constantly)\n-- Challenge 1: Can you Spin up studio notebook and select data from events table?\nselect * from events\n",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T16:43:26+0000",
+      "dateUpdated": "2023-08-03T20:57:44+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -197,7 +188,7 @@
           "values": [
             {
               "jobUrl": "/flinkdashboard/#/job/e21ccee7653fb03e95d019be77e33a43",
-              "$$hashKey": "object:1395"
+              "$$hashKey": "object:10609"
             }
           ],
           "interpreterSettingId": "flink"
@@ -210,12 +201,12 @@
       "dateStarted": "2023-08-03T16:43:26+0000",
       "dateFinished": "2023-08-03T16:43:53+0000",
       "status": "ABORT",
-      "$$hashKey": "object:302"
+      "$$hashKey": "object:56"
     },
     {
-      "text": "%flink.ssql\n-- Create players table connected to the MySQL in CDC mode.\n-- Part 2: Streaming enrichment using MySQL CDC\n-- Ref: https://github.com/ververica/flink-cdc-connectors/blob/master/docs/content/connectors/mysql-cdc.md\nDROP TABLE IF EXISTS `players`;\nCREATE TABLE `players` (\n    `operation_ts` TIMESTAMP_LTZ(3) METADATA FROM 'op_ts' VIRTUAL,\n    `player_id` STRING,\n    `alias` STRING,\n    `level` BIGINT,\n    `country` STRING,\n    `is_bot` INT,\n    `subscription_type` STRING,\n     WATERMARK FOR operation_ts AS operation_ts - INTERVAL '5' SECOND,\n    PRIMARY KEY(player_id) NOT ENFORCED\n)\nWITH (\n    'connector' = 'mysql-cdc',\n    'hostname' = 'ip-10-0-147-9.eu-west-1.compute.internal', -- Enter host name here from Cloudformation output.\n    'port' = '3306',\n    'username' = 'admin',\n    'password' = 'lb7b5sVFP6owr8nRlTnANgWzicVBEx9o', -- Enter password here from Cloudformation output secrets manager link\n    'database-name' = 'gaming',\n    'table-name' = 'players'\n);",
+      "text": "%flink.ssql\n-- Create players table connected to the MySQL in CDC mode.\n-- Part 2: Streaming enrichment using MySQL CDC\n-- Ref: https://github.com/ververica/flink-cdc-connectors/blob/master/docs/content/connectors/mysql-cdc.md\nDROP TABLE IF EXISTS `players`;\nCREATE TABLE `players` (\n    `operation_ts` TIMESTAMP_LTZ(3) METADATA FROM 'op_ts' VIRTUAL,\n    `player_id` STRING,\n    `alias` STRING,\n    `level` BIGINT,\n    `country` STRING,\n    `is_bot` INT,\n    `subscription_type` STRING,\n     WATERMARK FOR operation_ts AS operation_ts - INTERVAL '5' SECOND,\n    PRIMARY KEY(player_id) NOT ENFORCED\n)\nWITH (\n    'connector' = 'mysql-cdc',\n    'hostname' = '', -- Enter host name here from Cloudformation output.\n    'port' = '3306',\n    'username' = 'admin',\n    'password' = '', -- Enter password here from Cloudformation output secrets manager link\n    'database-name' = 'gaming',\n    'table-name' = 'players'\n);",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T16:44:35+0000",
+      "dateUpdated": "2023-08-03T21:11:09+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -252,12 +243,12 @@
       "dateStarted": "2023-08-03T16:44:35+0000",
       "dateFinished": "2023-08-03T16:44:37+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:303"
+      "$$hashKey": "object:57"
     },
     {
-      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC, reading CDC events from MySQL binlog table.\nselect * from players",
+      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC, reading CDC events from MySQL binlog table.\n-- Challenge 2.1: Can you select data from enriched-events table?\nselect * from players",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T16:44:58+0000",
+      "dateUpdated": "2023-08-03T20:58:57+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -333,7 +324,7 @@
           "values": [
             {
               "jobUrl": "/flinkdashboard/#/job/ae18350fea46427d648d6affdefe21dc",
-              "$$hashKey": "object:1481"
+              "$$hashKey": "object:10612"
             }
           ],
           "interpreterSettingId": "flink"
@@ -346,7 +337,7 @@
       "dateStarted": "2023-08-03T16:44:40+0000",
       "dateFinished": "2023-08-03T16:45:00+0000",
       "status": "ABORT",
-      "$$hashKey": "object:304"
+      "$$hashKey": "object:58"
     },
     {
       "text": "%flink.ssql\n-- Describe schema of the event table\ndesc events;",
@@ -417,7 +408,7 @@
       "dateStarted": "2023-08-03T16:45:08+0000",
       "dateFinished": "2023-08-03T16:45:08+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:305"
+      "$$hashKey": "object:59"
     },
     {
       "text": "%flink.ssql\n-- Describe schema of the players table\ndesc players;",
@@ -488,12 +479,12 @@
       "dateStarted": "2023-08-03T16:45:11+0000",
       "dateFinished": "2023-08-03T16:45:12+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:306"
+      "$$hashKey": "object:60"
     },
     {
-      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC\n-- Challange 2: Player distribution by country\nselect country, count(distinct player_id) as players_count from players group by country;",
+      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC\n-- Challenge 2.1: Can you select data from enriched-events table and plot pie chart showing player distribution by country?\nselect country, count(distinct player_id) as players_count from players group by country;",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T16:45:16+0000",
+      "dateUpdated": "2023-08-03T20:59:15+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -648,7 +639,7 @@
           "values": [
             {
               "jobUrl": "/flinkdashboard/#/job/b44bb869d39a80ac0ce0f45506eacade",
-              "$$hashKey": "object:1607"
+              "$$hashKey": "object:10615"
             }
           ],
           "interpreterSettingId": "flink"
@@ -661,12 +652,12 @@
       "dateStarted": "2023-08-03T16:45:17+0000",
       "dateFinished": "2023-08-03T16:45:40+0000",
       "status": "ABORT",
-      "$$hashKey": "object:307"
+      "$$hashKey": "object:61"
     },
     {
-      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC (Joining latest CDC value with real-time event stream to keep enrichment up to date)\n-- Challenge 2.2: Join MySQL CDC table and enrich event data with player information\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/queries/joins/#temporal-joins\nselect events.*, alias from events JOIN players FOR SYSTEM_TIME AS OF events.event_time_tz on events.player_id = players.player_id",
+      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC (Joining latest CDC value with real-time event stream to keep enrichment up to date)\n-- Challenge 2.2: Can you join events with latest values (Insert/Update/Deletes) of players table by system time?\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/queries/joins/#temporal-joins\nselect events.*, alias from events JOIN players FOR SYSTEM_TIME AS OF events.event_time_tz on events.player_id = players.player_id",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T16:45:45+0000",
+      "dateUpdated": "2023-08-03T20:59:55+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -745,7 +736,7 @@
           "values": [
             {
               "jobUrl": "/flinkdashboard/#/job/a31c9165223762a98f21b9da308371ad",
-              "$$hashKey": "object:1653"
+              "$$hashKey": "object:10618"
             }
           ],
           "interpreterSettingId": "flink"
@@ -758,12 +749,12 @@
       "dateStarted": "2023-08-03T16:45:45+0000",
       "dateFinished": "2023-08-03T16:47:02+0000",
       "status": "ABORT",
-      "$$hashKey": "object:308"
+      "$$hashKey": "object:62"
     },
     {
-      "text": "%flink.ssql(type=update)\n-- Part 3: Stream processing. Computing functional leaderboard\n-- Challenge 3.1: Write query to compute leaderboard\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/queries/with/\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/queries/window-tvf/\nWITH enriched_events AS (\n    select events.*, alias from events JOIN players FOR SYSTEM_TIME AS OF events.event_time_tz on events.player_id = players.player_id\n)\nSELECT TUMBLE_END(event_time_tz, interval '30' SECOND) as event_time, alias, SUM(distance_meters) as total_distance, AVG(speed_kmph) as avg_speed\nFROM enriched_events\nGROUP BY alias, TUMBLE(event_time_tz, INTERVAL '30' SECOND);",
+      "text": "%flink.ssql(type=update)\n-- Part 3: Stream processing. Computing functional leaderboard\n-- Challenge 3.1: Can you run a query to compute leaderboard based on average speed and total distance by player refreshing every 30 seconds?\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/queries/with/\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/queries/window-tvf/\nWITH enriched_events AS (\n    select events.*, alias from events JOIN players FOR SYSTEM_TIME AS OF events.event_time_tz on events.player_id = players.player_id\n)\nSELECT TUMBLE_END(event_time_tz, interval '30' SECOND) as event_time, alias, SUM(distance_meters) as total_distance, AVG(speed_kmph) as avg_speed\nFROM enriched_events\nGROUP BY alias, TUMBLE(event_time_tz, INTERVAL '30' SECOND);",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T16:47:13+0000",
+      "dateUpdated": "2023-08-03T21:00:39+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -840,7 +831,7 @@
           "values": [
             {
               "jobUrl": "/flinkdashboard/#/job/dc775df13441dd6fa860b0ff7ce66aa4",
-              "$$hashKey": "object:1699"
+              "$$hashKey": "object:10621"
             }
           ],
           "interpreterSettingId": "flink"
@@ -853,12 +844,12 @@
       "dateStarted": "2023-08-03T16:47:08+0000",
       "dateFinished": "2023-08-03T16:48:19+0000",
       "status": "ABORT",
-      "$$hashKey": "object:309"
+      "$$hashKey": "object:63"
     },
     {
-      "text": "%flink.ssql\n-- Part 3: Stream processing. Computing functional leaderboard and storing it as view for re-use.\n-- Challenge 3.2: Create VIEW leaderboard to refer in the next query\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/create/#create-view\nDROP VIEW IF EXISTS leaderboard;\nCREATE VIEW leaderboard AS\nWITH enriched_events AS (\n    select events.*, alias from events JOIN players FOR SYSTEM_TIME AS OF events.event_time_tz on events.player_id = players.player_id\n)\nSELECT TUMBLE_END(event_time_tz, interval '30' SECOND) as event_time, alias, SUM(distance_meters) as total_distance, AVG(speed_kmph) as avg_speed\nFROM enriched_events\nGROUP BY alias, TUMBLE(event_time_tz, INTERVAL '30' SECOND);",
+      "text": "%flink.ssql\n-- Part 3: Stream processing. Computing functional leaderboard and storing it as view for re-use.\n-- Challenge 3.2: Can you register leaderboard query as a view?\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/create/#create-view\nDROP VIEW IF EXISTS leaderboard;\nCREATE VIEW leaderboard AS\nWITH enriched_events AS (\n    select events.*, alias from events JOIN players FOR SYSTEM_TIME AS OF events.event_time_tz on events.player_id = players.player_id\n)\nSELECT TUMBLE_END(event_time_tz, interval '30' SECOND) as event_time, alias, SUM(distance_meters) as total_distance, AVG(speed_kmph) as avg_speed\nFROM enriched_events\nGROUP BY alias, TUMBLE(event_time_tz, INTERVAL '30' SECOND);",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T16:48:31+0000",
+      "dateUpdated": "2023-08-03T21:00:58+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -924,7 +915,7 @@
       "dateStarted": "2023-08-03T16:48:31+0000",
       "dateFinished": "2023-08-03T16:48:38+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:310"
+      "$$hashKey": "object:64"
     },
     {
       "text": "%flink.ssql\n-- Part 3: Storing results to the Redis database\n-- Create results table to push redis commands to the results stream for lambda function to execute them on Redis\nDROP TABLE IF EXISTS `results`;\nCREATE TABLE `results` (\n    `event_time` TIMESTAMP(3),\n    `command` STRING\n)\nWITH (\n    'connector' = 'kinesis', -- connect to the kinesis stream\n    'stream' = 'GamingLeaderboardStack-results',\n    'aws.region' = 'eu-west-1', -- example: eu-west-1\n    'format' = 'json' -- source data in json format\n)",
@@ -966,7 +957,7 @@
       "dateStarted": "2023-08-03T16:48:43+0000",
       "dateFinished": "2023-08-03T16:48:44+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:311"
+      "$$hashKey": "object:65"
     },
     {
       "text": "%flink.ssql\n-- Part 3: Further processing output for storing results to the Redis database\n-- Ref: https://redis.io/commands/zincrby/\nselect event_time, CONCAT('ZINCRBY leaderboard:total_distance ',CAST(total_distance AS STRING),' ',alias) as command from leaderboard",
@@ -1046,7 +1037,7 @@
           "values": [
             {
               "jobUrl": "/flinkdashboard/#/job/6bdf5767b447249bfdb7fe45dd119233",
-              "$$hashKey": "object:1825"
+              "$$hashKey": "object:1604"
             }
           ],
           "interpreterSettingId": "flink"
@@ -1059,12 +1050,12 @@
       "dateStarted": "2023-08-03T16:48:49+0000",
       "dateFinished": "2023-08-03T16:50:06+0000",
       "status": "ABORT",
-      "$$hashKey": "object:312"
+      "$$hashKey": "object:66"
     },
     {
-      "text": "%flink.ssql(type=update)\n-- Part 3: Leaderboard 1: Storing total_distance results to the Redis database\n-- Ref: https://redis.io/commands/zincrby/\n\nINSERT INTO results\nselect event_time, CONCAT('ZINCRBY leaderboard:total_distance ',CAST(total_distance AS STRING),' ',alias) as command from leaderboard",
+      "text": "%flink.ssql(type=update)\n-- Part 3: Leaderboard 1: Storing total_distance results to the Redis database\n-- Ref: https://redis.io/commands/zincrby/\n-- Challenge 3.3: Can you store results to MemoryDB for Redis?\nINSERT INTO results\nselect event_time, CONCAT('ZINCRBY leaderboard:total_distance ',CAST(total_distance AS STRING),' ',alias) as command from leaderboard",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T20:27:41+0000",
+      "dateUpdated": "2023-08-03T21:02:30+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -1083,39 +1074,8 @@
         "params": {},
         "forms": {}
       },
-      "results": {
-        "code": "ERROR",
-        "msg": [
-          {
-            "type": "ANGULAR",
-            "data": "<h1>Duration: {{duration}} </h1>\n"
-          },
-          {
-            "type": "TEXT",
-            "data": "Fail to run sql command: INSERT INTO results\nselect event_time, CONCAT('ZINCRBY leaderboard:total_distance ',CAST(total_distance AS STRING),' ',alias) as command from leaderboard\n"
-          },
-          {
-            "type": "ANGULAR",
-            "data": "<div class='container ng-scope' style='padding-left:0px;padding-right:0px;'>\n    <div class='panel panel-danger'>\n        <div class='panel-heading' ng-click='isOpen=!isOpen' ng-init='isOpen=false' style=\"cursor:pointer\">\n            <div class='plainTextContainer' style='font-weight:bolder'><i class=\"fa fa-caret-right fa-fw\" style=\"padding-right:7px;transition:all 0.3s;{{isOpen?'transform:rotate(90deg);transform-origin:25% 45%':''}}\"></i>Job was cancelled.</div>\n        </div>\n        <div class='panel-collapse' uib-collapse='!isOpen'>\n            <div class='text' style='max-height:300px;overflow:auto;padding:10px'>java.io.IOException: Flink job is failed\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callInserts(Flink115SqlInterpreter.java:397)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callInsert(Flink115SqlInterpreter.java:371)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callOperation(Flink115SqlInterpreter.java:287)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.runSqlList(Flink115SqlInterpreter.java:236)\n\tat org.apache.zeppelin.flink.Flink115Shims.runSqlList(Flink115Shims.java:315)\n\tat org.apache.zeppelin.flink.FlinkStreamSqlInterpreter.runSqlList(FlinkStreamSqlInterpreter.java:103)\n\tat org.apache.zeppelin.flink.FlinkSqlInterpreter.internalInterpret(FlinkSqlInterpreter.java:63)\n\tat org.apache.zeppelin.interpreter.AbstractInterpreter.interpret(AbstractInterpreter.java:55)\n\tat org.apache.zeppelin.interpreter.LazyOpenInterpreter.interpret(LazyOpenInterpreter.java:110)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:860)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:752)\n\tat org.apache.zeppelin.scheduler.Job.run(Job.java:172)\n\tat org.apache.zeppelin.scheduler.AbstractScheduler.runJob(AbstractScheduler.java:132)\n\tat org.apache.zeppelin.scheduler.ParallelScheduler.lambda$runJobInScheduler$0(ParallelScheduler.java:46)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)\n\tat java.base/java.lang.Thread.run(Thread.java:829)\nCaused by: java.util.concurrent.ExecutionException: org.apache.flink.table.api.TableException: Failed to wait job finish\n\tat java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)\n\tat java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1999)\n\tat org.apache.flink.table.api.internal.TableResultImpl.awaitInternal(TableResultImpl.java:118)\n\tat org.apache.flink.table.api.internal.TableResultImpl.await(TableResultImpl.java:81)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callInserts(Flink115SqlInterpreter.java:385)\n\t... 16 more\nCaused by: org.apache.flink.table.api.TableException: Failed to wait job finish\n\tat org.apache.flink.table.api.internal.InsertResultProvider.hasNext(InsertResultProvider.java:85)\n\tat org.apache.flink.table.api.internal.InsertResultProvider.isFirstRowReady(InsertResultProvider.java:71)\n\tat org.apache.flink.table.api.internal.TableResultImpl.lambda$awaitInternal$1(TableResultImpl.java:105)\n\tat java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1736)\n\t... 3 more\nCaused by: java.util.concurrent.ExecutionException: org.apache.flink.client.program.ProgramInvocationException: Job failed (JobID: acd9e5c3401c6b79e9a01ae217158c29)\n\tat java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)\n\tat java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1999)\n\tat org.apache.flink.table.api.internal.InsertResultProvider.hasNext(InsertResultProvider.java:83)\n\t... 6 more\nCaused by: org.apache.flink.client.program.ProgramInvocationException: Job failed (JobID: acd9e5c3401c6b79e9a01ae217158c29)\n\tat org.apache.flink.client.deployment.ClusterClientJobClientAdapter.lambda$getJobExecutionResult$6(ClusterClientJobClientAdapter.java:130)\n\tat java.base/java.util.concurrent.CompletableFuture$UniApply.tryFire(CompletableFuture.java:642)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.util.concurrent.FutureUtils.lambda$retryOperationWithDelay$9(FutureUtils.java:403)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.client.program.rest.RestClusterClient.lambda$pollResourceAsync$26(RestClusterClient.java:708)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.util.concurrent.FutureUtils.lambda$retryOperationWithDelay$9(FutureUtils.java:403)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.postFire(CompletableFuture.java:610)\n\tat java.base/java.util.concurrent.CompletableFuture$UniCompose.tryFire(CompletableFuture.java:1085)\n\tat java.base/java.util.concurrent.CompletableFuture$Completion.run(CompletableFuture.java:478)\n\t... 3 more\nCaused by: org.apache.flink.runtime.client.JobCancellationException: Job was cancelled.\n\tat org.apache.flink.runtime.jobmaster.JobResult.toJobExecutionResult(JobResult.java:146)\n\tat org.apache.flink.client.deployment.ClusterClientJobClientAdapter.lambda$getJobExecutionResult$6(ClusterClientJobClientAdapter.java:128)\n\t... 23 more\n</div>\n        </div>\n    </div>\n</div>\n"
-          }
-        ]
-      },
       "apps": [],
-      "runtimeInfos": {
-        "jobUrl": {
-          "propertyName": "jobUrl",
-          "label": "FLINK JOB",
-          "tooltip": "View in Flink web UI",
-          "group": "flink",
-          "values": [
-            {
-              "jobUrl": "/flinkdashboard/#/job/acd9e5c3401c6b79e9a01ae217158c29",
-              "$$hashKey": "object:10629"
-            }
-          ],
-          "interpreterSettingId": "flink"
-        }
-      },
+      "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
       "jobName": "paragraph_1690968058885_518333519",
       "id": "paragraph_1690968058885_518333519",
@@ -1123,7 +1083,7 @@
       "dateStarted": "2023-08-03T20:27:41+0000",
       "dateFinished": "2023-08-03T20:29:46+0000",
       "status": "ABORT",
-      "$$hashKey": "object:313"
+      "$$hashKey": "object:67"
     },
     {
       "text": "%flink.ssql\n-- Part 3: Further processing output for storing results to the Redis database\n-- Ref: https://redis.io/commands/zadd/\nselect event_time, CONCAT('ZADD leaderboard:top_speed GT ',CAST(avg_speed AS STRING),' ',alias) as command from leaderboard",
@@ -1203,7 +1163,7 @@
           "values": [
             {
               "jobUrl": "/flinkdashboard/#/job/d3183f340c0209bed861ba0ba258d302",
-              "$$hashKey": "object:11318"
+              "$$hashKey": "object:1696"
             }
           ],
           "interpreterSettingId": "flink"
@@ -1216,12 +1176,12 @@
       "dateStarted": "2023-08-03T20:29:51+0000",
       "dateFinished": "2023-08-03T20:31:05+0000",
       "status": "ABORT",
-      "$$hashKey": "object:314"
+      "$$hashKey": "object:68"
     },
     {
-      "text": "%flink.ssql(type=update)\n-- Part 3: Leaderboard 2: Storing top_speed results to the Redis database\n-- Ref: https://redis.io/commands/zincrby/\n\nINSERT INTO results\nselect event_time, CONCAT('ZADD leaderboard:top_speed GT ',CAST(avg_speed AS STRING),' ',alias) as command from leaderboard",
+      "text": "%flink.ssql(type=update)\n-- Part 3: Leaderboard 2: Storing top_speed results to the Redis database\n-- Ref: https://redis.io/commands/zincrby/\n-- Challenge 3.3: Can you store results to MemoryDB for Redis?\nINSERT INTO results\nselect event_time, CONCAT('ZADD leaderboard:top_speed GT ',CAST(avg_speed AS STRING),' ',alias) as command from leaderboard",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T20:31:10+0000",
+      "dateUpdated": "2023-08-03T21:02:59+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -1240,39 +1200,8 @@
         "params": {},
         "forms": {}
       },
-      "results": {
-        "code": "ERROR",
-        "msg": [
-          {
-            "type": "ANGULAR",
-            "data": "<h1>Duration: {{duration}} </h1>\n"
-          },
-          {
-            "type": "TEXT",
-            "data": "Fail to run sql command: INSERT INTO results\nselect event_time, CONCAT('ZADD leaderboard:top_speed GT ',CAST(avg_speed AS STRING),' ',alias) as command from leaderboard\n"
-          },
-          {
-            "type": "ANGULAR",
-            "data": "<div class='container ng-scope' style='padding-left:0px;padding-right:0px;'>\n    <div class='panel panel-danger'>\n        <div class='panel-heading' ng-click='isOpen=!isOpen' ng-init='isOpen=false' style=\"cursor:pointer\">\n            <div class='plainTextContainer' style='font-weight:bolder'><i class=\"fa fa-caret-right fa-fw\" style=\"padding-right:7px;transition:all 0.3s;{{isOpen?'transform:rotate(90deg);transform-origin:25% 45%':''}}\"></i>Job was cancelled.</div>\n        </div>\n        <div class='panel-collapse' uib-collapse='!isOpen'>\n            <div class='text' style='max-height:300px;overflow:auto;padding:10px'>java.io.IOException: Flink job is failed\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callInserts(Flink115SqlInterpreter.java:397)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callInsert(Flink115SqlInterpreter.java:371)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callOperation(Flink115SqlInterpreter.java:287)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.runSqlList(Flink115SqlInterpreter.java:236)\n\tat org.apache.zeppelin.flink.Flink115Shims.runSqlList(Flink115Shims.java:315)\n\tat org.apache.zeppelin.flink.FlinkStreamSqlInterpreter.runSqlList(FlinkStreamSqlInterpreter.java:103)\n\tat org.apache.zeppelin.flink.FlinkSqlInterpreter.internalInterpret(FlinkSqlInterpreter.java:63)\n\tat org.apache.zeppelin.interpreter.AbstractInterpreter.interpret(AbstractInterpreter.java:55)\n\tat org.apache.zeppelin.interpreter.LazyOpenInterpreter.interpret(LazyOpenInterpreter.java:110)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:860)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:752)\n\tat org.apache.zeppelin.scheduler.Job.run(Job.java:172)\n\tat org.apache.zeppelin.scheduler.AbstractScheduler.runJob(AbstractScheduler.java:132)\n\tat org.apache.zeppelin.scheduler.ParallelScheduler.lambda$runJobInScheduler$0(ParallelScheduler.java:46)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)\n\tat java.base/java.lang.Thread.run(Thread.java:829)\nCaused by: java.util.concurrent.ExecutionException: org.apache.flink.table.api.TableException: Failed to wait job finish\n\tat java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)\n\tat java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1999)\n\tat org.apache.flink.table.api.internal.TableResultImpl.awaitInternal(TableResultImpl.java:118)\n\tat org.apache.flink.table.api.internal.TableResultImpl.await(TableResultImpl.java:81)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callInserts(Flink115SqlInterpreter.java:385)\n\t... 16 more\nCaused by: org.apache.flink.table.api.TableException: Failed to wait job finish\n\tat org.apache.flink.table.api.internal.InsertResultProvider.hasNext(InsertResultProvider.java:85)\n\tat org.apache.flink.table.api.internal.InsertResultProvider.isFirstRowReady(InsertResultProvider.java:71)\n\tat org.apache.flink.table.api.internal.TableResultImpl.lambda$awaitInternal$1(TableResultImpl.java:105)\n\tat java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1736)\n\t... 3 more\nCaused by: java.util.concurrent.ExecutionException: org.apache.flink.client.program.ProgramInvocationException: Job failed (JobID: 837e9af4acf8311fd2534de02dae6d0f)\n\tat java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)\n\tat java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1999)\n\tat org.apache.flink.table.api.internal.InsertResultProvider.hasNext(InsertResultProvider.java:83)\n\t... 6 more\nCaused by: org.apache.flink.client.program.ProgramInvocationException: Job failed (JobID: 837e9af4acf8311fd2534de02dae6d0f)\n\tat org.apache.flink.client.deployment.ClusterClientJobClientAdapter.lambda$getJobExecutionResult$6(ClusterClientJobClientAdapter.java:130)\n\tat java.base/java.util.concurrent.CompletableFuture$UniApply.tryFire(CompletableFuture.java:642)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.util.concurrent.FutureUtils.lambda$retryOperationWithDelay$9(FutureUtils.java:403)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.client.program.rest.RestClusterClient.lambda$pollResourceAsync$26(RestClusterClient.java:708)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.util.concurrent.FutureUtils.lambda$retryOperationWithDelay$9(FutureUtils.java:403)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.postFire(CompletableFuture.java:610)\n\tat java.base/java.util.concurrent.CompletableFuture$UniCompose.tryFire(CompletableFuture.java:1085)\n\tat java.base/java.util.concurrent.CompletableFuture$Completion.run(CompletableFuture.java:478)\n\t... 3 more\nCaused by: org.apache.flink.runtime.client.JobCancellationException: Job was cancelled.\n\tat org.apache.flink.runtime.jobmaster.JobResult.toJobExecutionResult(JobResult.java:146)\n\tat org.apache.flink.client.deployment.ClusterClientJobClientAdapter.lambda$getJobExecutionResult$6(ClusterClientJobClientAdapter.java:128)\n\t... 23 more\n</div>\n        </div>\n    </div>\n</div>\n"
-          }
-        ]
-      },
       "apps": [],
-      "runtimeInfos": {
-        "jobUrl": {
-          "propertyName": "jobUrl",
-          "label": "FLINK JOB",
-          "tooltip": "View in Flink web UI",
-          "group": "flink",
-          "values": [
-            {
-              "jobUrl": "/flinkdashboard/#/job/837e9af4acf8311fd2534de02dae6d0f",
-              "$$hashKey": "object:11398"
-            }
-          ],
-          "interpreterSettingId": "flink"
-        }
-      },
+      "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
       "jobName": "paragraph_1690968610778_451974752",
       "id": "paragraph_1690968610778_451974752",
@@ -1280,7 +1209,7 @@
       "dateStarted": "2023-08-03T20:31:10+0000",
       "dateFinished": "2023-08-03T20:32:13+0000",
       "status": "ABORT",
-      "$$hashKey": "object:315"
+      "$$hashKey": "object:69"
     },
     {
       "text": "%flink.ssql\n-- Part 4: Dynamic parameter change and apply those as filters\nDROP TABLE IF EXISTS `config`;\nCREATE TABLE `config` (\n    `is_bot` INT,\n    `event_time` BIGINT,\n    `event_time_tz` AS TO_TIMESTAMP_LTZ(event_time, 3),\n     WATERMARK FOR event_time_tz AS event_time_tz - INTERVAL '5' SECOND\n)\nWITH (\n    'connector' = 'kinesis', -- connect to the kinesis stream\n    'stream' = 'GamingLeaderboardStack-config',\n    'aws.region' = 'eu-west-1', -- example: eu-west-1\n    'scan.stream.initpos' = 'LATEST', -- read from the very beginning of the stream\n    'format' = 'json' -- source data in json format\n);",
@@ -1322,7 +1251,7 @@
       "dateStarted": "2023-08-03T20:32:18+0000",
       "dateFinished": "2023-08-03T20:32:22+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:316"
+      "$$hashKey": "object:70"
     },
     {
       "text": "%flink.ssql\nselect is_bot from config order by event_time desc limit 1",
@@ -1401,7 +1330,7 @@
           "values": [
             {
               "jobUrl": "/flinkdashboard/#/job/b913e2c85205c6aba1c6ac90fc0b8074",
-              "$$hashKey": "object:12163"
+              "$$hashKey": "object:1828"
             }
           ],
           "interpreterSettingId": "flink"
@@ -1414,12 +1343,12 @@
       "dateStarted": "2023-08-03T20:32:52+0000",
       "dateFinished": "2023-08-03T20:34:26+0000",
       "status": "ABORT",
-      "$$hashKey": "object:317"
+      "$$hashKey": "object:71"
     },
     {
-      "text": "%flink.ssql\n-- Part 4: Dynamic parameter change. keep real players only in the stream, filter all the bots and produce v2 shadow version of leaderboard before going live.\n-- Note: Push event from Lambda publisher after starting the job and when you see records stady for players table in Flink UI\nDROP VIEW IF EXISTS leaderboard_v2;\nCREATE VIEW leaderboard_v2 AS\nWITH enriched_events AS (\n    select events.*, alias from events JOIN players FOR SYSTEM_TIME AS OF events.event_time_tz on events.player_id = players.player_id where players.is_bot = (select is_bot from config order by event_time desc limit 1)\n)\nSELECT TUMBLE_END(event_time_tz, interval '30' SECOND) as event_time, alias, SUM(distance_meters) as total_distance, AVG(speed_kmph) as avg_speed\nFROM enriched_events\nGROUP BY alias, TUMBLE(event_time_tz, INTERVAL '30' SECOND);",
+      "text": "%flink.ssql\n-- Part 4: Dynamic parameter change. keep real players only in the stream, filter all the bots and produce v2 shadow version of leaderboard before going live.\n-- Note: Push event from Lambda publisher after starting the job and when you see records stady for players table in Flink UI\n-- Challenge 4.1: Remove all bot users from leaderboard processing.\nDROP VIEW IF EXISTS leaderboard_v2;\nCREATE VIEW leaderboard_v2 AS\nWITH enriched_events AS (\n    select events.*, alias from events JOIN players FOR SYSTEM_TIME AS OF events.event_time_tz on events.player_id = players.player_id where players.is_bot = (select is_bot from config order by event_time desc limit 1)\n)\nSELECT TUMBLE_END(event_time_tz, interval '30' SECOND) as event_time, alias, SUM(distance_meters) as total_distance, AVG(speed_kmph) as avg_speed\nFROM enriched_events\nGROUP BY alias, TUMBLE(event_time_tz, INTERVAL '30' SECOND);",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T20:34:32+0000",
+      "dateUpdated": "2023-08-03T21:05:59+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -1456,7 +1385,7 @@
       "dateStarted": "2023-08-03T20:34:32+0000",
       "dateFinished": "2023-08-03T20:34:44+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:318"
+      "$$hashKey": "object:72"
     },
     {
       "text": "%flink.ssql\n-- Part 4: Dynamic parameter change and apply those as filters\nselect * from leaderboard_v2",
@@ -1538,7 +1467,7 @@
           "values": [
             {
               "jobUrl": "/flinkdashboard/#/job/4d191195ddb9b4d0b9d33ab211ec77f0",
-              "$$hashKey": "object:14062"
+              "$$hashKey": "object:1914"
             }
           ],
           "interpreterSettingId": "flink"
@@ -1551,12 +1480,12 @@
       "dateStarted": "2023-08-03T20:37:19+0000",
       "dateFinished": "2023-08-03T20:38:39+0000",
       "status": "ABORT",
-      "$$hashKey": "object:319"
+      "$$hashKey": "object:73"
     },
     {
-      "text": "%flink.ssql(type=update)\n-- Part 4: Dynamic parameter change, shadow testing (A/B) prepare v2 leadboards for comparisions\nINSERT INTO results\nselect event_time, CONCAT('ZADD leaderboard:top_speed:v2 GT ',CAST(avg_speed AS STRING),' ',alias) as command from leaderboard_v2;\n",
+      "text": "%flink.ssql(type=update)\n-- Part 4: Dynamic parameter change, shadow testing (A/B) prepare v2 leadboards for comparisions\n-- Challenge 4.2: Remove all bot users from leaderboard processing and storing leaderboard v2 for shadow (A/B) testing.\nINSERT INTO results\nselect event_time, CONCAT('ZADD leaderboard:top_speed:v2 GT ',CAST(avg_speed AS STRING),' ',alias) as command from leaderboard_v2;\n",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T20:39:00+0000",
+      "dateUpdated": "2023-08-03T21:05:02+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -1575,39 +1504,8 @@
         "params": {},
         "forms": {}
       },
-      "results": {
-        "code": "ERROR",
-        "msg": [
-          {
-            "type": "ANGULAR",
-            "data": "<h1>Duration: {{duration}} </h1>\n"
-          },
-          {
-            "type": "TEXT",
-            "data": "Fail to run sql command: INSERT INTO results\nselect event_time, CONCAT('ZADD leaderboard:top_speed:v2 GT ',CAST(avg_speed AS STRING),' ',alias) as command from leaderboard_v2\n"
-          },
-          {
-            "type": "ANGULAR",
-            "data": "<div class='container ng-scope' style='padding-left:0px;padding-right:0px;'>\n    <div class='panel panel-danger'>\n        <div class='panel-heading' ng-click='isOpen=!isOpen' ng-init='isOpen=false' style=\"cursor:pointer\">\n            <div class='plainTextContainer' style='font-weight:bolder'><i class=\"fa fa-caret-right fa-fw\" style=\"padding-right:7px;transition:all 0.3s;{{isOpen?'transform:rotate(90deg);transform-origin:25% 45%':''}}\"></i>Job was cancelled.</div>\n        </div>\n        <div class='panel-collapse' uib-collapse='!isOpen'>\n            <div class='text' style='max-height:300px;overflow:auto;padding:10px'>java.io.IOException: Flink job is failed\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callInserts(Flink115SqlInterpreter.java:397)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callInsert(Flink115SqlInterpreter.java:371)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callOperation(Flink115SqlInterpreter.java:287)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.runSqlList(Flink115SqlInterpreter.java:236)\n\tat org.apache.zeppelin.flink.Flink115Shims.runSqlList(Flink115Shims.java:315)\n\tat org.apache.zeppelin.flink.FlinkStreamSqlInterpreter.runSqlList(FlinkStreamSqlInterpreter.java:103)\n\tat org.apache.zeppelin.flink.FlinkSqlInterpreter.internalInterpret(FlinkSqlInterpreter.java:63)\n\tat org.apache.zeppelin.interpreter.AbstractInterpreter.interpret(AbstractInterpreter.java:55)\n\tat org.apache.zeppelin.interpreter.LazyOpenInterpreter.interpret(LazyOpenInterpreter.java:110)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:860)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:752)\n\tat org.apache.zeppelin.scheduler.Job.run(Job.java:172)\n\tat org.apache.zeppelin.scheduler.AbstractScheduler.runJob(AbstractScheduler.java:132)\n\tat org.apache.zeppelin.scheduler.ParallelScheduler.lambda$runJobInScheduler$0(ParallelScheduler.java:46)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)\n\tat java.base/java.lang.Thread.run(Thread.java:829)\nCaused by: java.util.concurrent.ExecutionException: org.apache.flink.table.api.TableException: Failed to wait job finish\n\tat java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)\n\tat java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1999)\n\tat org.apache.flink.table.api.internal.TableResultImpl.awaitInternal(TableResultImpl.java:118)\n\tat org.apache.flink.table.api.internal.TableResultImpl.await(TableResultImpl.java:81)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callInserts(Flink115SqlInterpreter.java:385)\n\t... 16 more\nCaused by: org.apache.flink.table.api.TableException: Failed to wait job finish\n\tat org.apache.flink.table.api.internal.InsertResultProvider.hasNext(InsertResultProvider.java:85)\n\tat org.apache.flink.table.api.internal.InsertResultProvider.isFirstRowReady(InsertResultProvider.java:71)\n\tat org.apache.flink.table.api.internal.TableResultImpl.lambda$awaitInternal$1(TableResultImpl.java:105)\n\tat java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1736)\n\t... 3 more\nCaused by: java.util.concurrent.ExecutionException: org.apache.flink.client.program.ProgramInvocationException: Job failed (JobID: 4aa1adb40c9f2a93cb3d93b89379575f)\n\tat java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)\n\tat java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1999)\n\tat org.apache.flink.table.api.internal.InsertResultProvider.hasNext(InsertResultProvider.java:83)\n\t... 6 more\nCaused by: org.apache.flink.client.program.ProgramInvocationException: Job failed (JobID: 4aa1adb40c9f2a93cb3d93b89379575f)\n\tat org.apache.flink.client.deployment.ClusterClientJobClientAdapter.lambda$getJobExecutionResult$6(ClusterClientJobClientAdapter.java:130)\n\tat java.base/java.util.concurrent.CompletableFuture$UniApply.tryFire(CompletableFuture.java:642)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.util.concurrent.FutureUtils.lambda$retryOperationWithDelay$9(FutureUtils.java:403)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.client.program.rest.RestClusterClient.lambda$pollResourceAsync$26(RestClusterClient.java:708)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.util.concurrent.FutureUtils.lambda$retryOperationWithDelay$9(FutureUtils.java:403)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.postFire(CompletableFuture.java:610)\n\tat java.base/java.util.concurrent.CompletableFuture$UniCompose.tryFire(CompletableFuture.java:1085)\n\tat java.base/java.util.concurrent.CompletableFuture$Completion.run(CompletableFuture.java:478)\n\t... 3 more\nCaused by: org.apache.flink.runtime.client.JobCancellationException: Job was cancelled.\n\tat org.apache.flink.runtime.jobmaster.JobResult.toJobExecutionResult(JobResult.java:146)\n\tat org.apache.flink.client.deployment.ClusterClientJobClientAdapter.lambda$getJobExecutionResult$6(ClusterClientJobClientAdapter.java:128)\n\t... 23 more\n</div>\n        </div>\n    </div>\n</div>\n"
-          }
-        ]
-      },
       "apps": [],
-      "runtimeInfos": {
-        "jobUrl": {
-          "propertyName": "jobUrl",
-          "label": "FLINK JOB",
-          "tooltip": "View in Flink web UI",
-          "group": "flink",
-          "values": [
-            {
-              "jobUrl": "/flinkdashboard/#/job/4aa1adb40c9f2a93cb3d93b89379575f",
-              "$$hashKey": "object:14142"
-            }
-          ],
-          "interpreterSettingId": "flink"
-        }
-      },
+      "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
       "jobName": "paragraph_1691060399968_1658344630",
       "id": "paragraph_1691060399968_1658344630",
@@ -1615,12 +1513,12 @@
       "dateStarted": "2023-08-03T20:39:00+0000",
       "dateFinished": "2023-08-03T20:41:16+0000",
       "status": "ABORT",
-      "$$hashKey": "object:320"
+      "$$hashKey": "object:74"
     },
     {
-      "text": "%flink.ssql(type=update)\n-- Part 4: Dynamic parameter change, shadow testing (A/B) prepare v2 leadboards for comparisions\nINSERT INTO results\nselect event_time, CONCAT('ZINCRBY leaderboard:total_distance:v2 ',CAST(total_distance AS STRING),' ',alias) as command from leaderboard_v2;\n",
+      "text": "%flink.ssql(type=update)\n-- Part 4: Dynamic parameter change, shadow testing (A/B) prepare v2 leadboards for comparisions\n-- Challenge 4.2: Remove all bot users from leaderboard processing and storing leaderboard v2 for shadow (A/B) testing.\nINSERT INTO results\nselect event_time, CONCAT('ZINCRBY leaderboard:total_distance:v2 ',CAST(total_distance AS STRING),' ',alias) as command from leaderboard_v2;\n",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T20:41:23+0000",
+      "dateUpdated": "2023-08-03T21:05:39+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -1639,39 +1537,8 @@
         "params": {},
         "forms": {}
       },
-      "results": {
-        "code": "ERROR",
-        "msg": [
-          {
-            "type": "ANGULAR",
-            "data": "<h1>Duration: {{duration}} </h1>\n"
-          },
-          {
-            "type": "TEXT",
-            "data": "Fail to run sql command: INSERT INTO results\nselect event_time, CONCAT('ZINCRBY leaderboard:total_distance:v2 ',CAST(total_distance AS STRING),' ',alias) as command from leaderboard_v2\n"
-          },
-          {
-            "type": "ANGULAR",
-            "data": "<div class='container ng-scope' style='padding-left:0px;padding-right:0px;'>\n    <div class='panel panel-danger'>\n        <div class='panel-heading' ng-click='isOpen=!isOpen' ng-init='isOpen=false' style=\"cursor:pointer\">\n            <div class='plainTextContainer' style='font-weight:bolder'><i class=\"fa fa-caret-right fa-fw\" style=\"padding-right:7px;transition:all 0.3s;{{isOpen?'transform:rotate(90deg);transform-origin:25% 45%':''}}\"></i>Job was cancelled.</div>\n        </div>\n        <div class='panel-collapse' uib-collapse='!isOpen'>\n            <div class='text' style='max-height:300px;overflow:auto;padding:10px'>java.io.IOException: Flink job is failed\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callInserts(Flink115SqlInterpreter.java:397)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callInsert(Flink115SqlInterpreter.java:371)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callOperation(Flink115SqlInterpreter.java:287)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.runSqlList(Flink115SqlInterpreter.java:236)\n\tat org.apache.zeppelin.flink.Flink115Shims.runSqlList(Flink115Shims.java:315)\n\tat org.apache.zeppelin.flink.FlinkStreamSqlInterpreter.runSqlList(FlinkStreamSqlInterpreter.java:103)\n\tat org.apache.zeppelin.flink.FlinkSqlInterpreter.internalInterpret(FlinkSqlInterpreter.java:63)\n\tat org.apache.zeppelin.interpreter.AbstractInterpreter.interpret(AbstractInterpreter.java:55)\n\tat org.apache.zeppelin.interpreter.LazyOpenInterpreter.interpret(LazyOpenInterpreter.java:110)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:860)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:752)\n\tat org.apache.zeppelin.scheduler.Job.run(Job.java:172)\n\tat org.apache.zeppelin.scheduler.AbstractScheduler.runJob(AbstractScheduler.java:132)\n\tat org.apache.zeppelin.scheduler.ParallelScheduler.lambda$runJobInScheduler$0(ParallelScheduler.java:46)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)\n\tat java.base/java.lang.Thread.run(Thread.java:829)\nCaused by: java.util.concurrent.ExecutionException: org.apache.flink.table.api.TableException: Failed to wait job finish\n\tat java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)\n\tat java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1999)\n\tat org.apache.flink.table.api.internal.TableResultImpl.awaitInternal(TableResultImpl.java:118)\n\tat org.apache.flink.table.api.internal.TableResultImpl.await(TableResultImpl.java:81)\n\tat org.apache.zeppelin.flink.Flink115SqlInterpreter.callInserts(Flink115SqlInterpreter.java:385)\n\t... 16 more\nCaused by: org.apache.flink.table.api.TableException: Failed to wait job finish\n\tat org.apache.flink.table.api.internal.InsertResultProvider.hasNext(InsertResultProvider.java:85)\n\tat org.apache.flink.table.api.internal.InsertResultProvider.isFirstRowReady(InsertResultProvider.java:71)\n\tat org.apache.flink.table.api.internal.TableResultImpl.lambda$awaitInternal$1(TableResultImpl.java:105)\n\tat java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1736)\n\t... 3 more\nCaused by: java.util.concurrent.ExecutionException: org.apache.flink.client.program.ProgramInvocationException: Job failed (JobID: ce15a397fa195a0f017b10dac4ad5a89)\n\tat java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)\n\tat java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1999)\n\tat org.apache.flink.table.api.internal.InsertResultProvider.hasNext(InsertResultProvider.java:83)\n\t... 6 more\nCaused by: org.apache.flink.client.program.ProgramInvocationException: Job failed (JobID: ce15a397fa195a0f017b10dac4ad5a89)\n\tat org.apache.flink.client.deployment.ClusterClientJobClientAdapter.lambda$getJobExecutionResult$6(ClusterClientJobClientAdapter.java:130)\n\tat java.base/java.util.concurrent.CompletableFuture$UniApply.tryFire(CompletableFuture.java:642)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.util.concurrent.FutureUtils.lambda$retryOperationWithDelay$9(FutureUtils.java:403)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.client.program.rest.RestClusterClient.lambda$pollResourceAsync$26(RestClusterClient.java:708)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2073)\n\tat org.apache.flink.util.concurrent.FutureUtils.lambda$retryOperationWithDelay$9(FutureUtils.java:403)\n\tat java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)\n\tat java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)\n\tat java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:506)\n\tat java.base/java.util.concurrent.CompletableFuture.postFire(CompletableFuture.java:610)\n\tat java.base/java.util.concurrent.CompletableFuture$UniCompose.tryFire(CompletableFuture.java:1085)\n\tat java.base/java.util.concurrent.CompletableFuture$Completion.run(CompletableFuture.java:478)\n\t... 3 more\nCaused by: org.apache.flink.runtime.client.JobCancellationException: Job was cancelled.\n\tat org.apache.flink.runtime.jobmaster.JobResult.toJobExecutionResult(JobResult.java:146)\n\tat org.apache.flink.client.deployment.ClusterClientJobClientAdapter.lambda$getJobExecutionResult$6(ClusterClientJobClientAdapter.java:128)\n\t... 23 more\n</div>\n        </div>\n    </div>\n</div>\n"
-          }
-        ]
-      },
       "apps": [],
-      "runtimeInfos": {
-        "jobUrl": {
-          "propertyName": "jobUrl",
-          "label": "FLINK JOB",
-          "tooltip": "View in Flink web UI",
-          "group": "flink",
-          "values": [
-            {
-              "jobUrl": "/flinkdashboard/#/job/ce15a397fa195a0f017b10dac4ad5a89",
-              "$$hashKey": "object:14229"
-            }
-          ],
-          "interpreterSettingId": "flink"
-        }
-      },
+      "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
       "jobName": "paragraph_1691008449909_159075",
       "id": "paragraph_1691008449909_159075",
@@ -1679,7 +1546,7 @@
       "dateStarted": "2023-08-03T20:41:23+0000",
       "dateFinished": "2023-08-03T20:43:11+0000",
       "status": "ABORT",
-      "$$hashKey": "object:321"
+      "$$hashKey": "object:75"
     },
     {
       "text": "%flink.ssql\n-- Part 5: Late arrival of data - Redis ZADD GT and ZINCRBY handles at the destinition\n-- ZINCRBY increments total distance irrespective of the time it arrives.\n-- ZADD with GT option replaces value of top speed only if speed is higher than the one currently stored. Late data doen't affect this behaviour.\n-- Ref: https://redis.io/commands/zadd/\n-- Ref: https://redis.io/commands/zincrby/\n",
@@ -1710,12 +1577,12 @@
       "id": "paragraph_1691008561481_1032412450",
       "dateCreated": "2023-08-02T20:36:01+0000",
       "status": "READY",
-      "$$hashKey": "object:322"
+      "$$hashKey": "object:76"
     },
     {
-      "text": "%flink.ssql\n-- Part 5: Data deduplication in JOIN query\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/queries/deduplication/\nselect * from (select events.*, alias, ROW_NUMBER() OVER (PARTITION BY events.player_id, events.event_time ORDER BY events.event_time ASC ) as rownum from events JOIN players FOR SYSTEM_TIME AS OF events.event_time_tz on events.player_id = players.player_id) where rownum = 1",
+      "text": "%flink.ssql\n-- Part 5: Data deduplication in JOIN query\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/queries/deduplication/\n-- Challenge 5.1: Deduplication of the data based on event_time and player_id.\nselect * from (select events.*, alias, ROW_NUMBER() OVER (PARTITION BY events.player_id, events.event_time ORDER BY events.event_time ASC ) as rownum from events JOIN players FOR SYSTEM_TIME AS OF events.event_time_tz on events.player_id = players.player_id) where rownum = 1",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T20:44:20+0000",
+      "dateUpdated": "2023-08-03T21:07:24+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -1795,7 +1662,7 @@
           "values": [
             {
               "jobUrl": "/flinkdashboard/#/job/a05e643956f7eb79649a2faee9576686",
-              "$$hashKey": "object:17164"
+              "$$hashKey": "object:10709"
             }
           ],
           "interpreterSettingId": "flink"
@@ -1808,12 +1675,12 @@
       "dateStarted": "2023-08-03T20:44:21+0000",
       "dateFinished": "2023-08-03T20:45:04+0000",
       "status": "ABORT",
-      "$$hashKey": "object:323"
+      "$$hashKey": "object:77"
     },
     {
       "text": "%flink.ssql\n-- Part 5: Replay data from S3 source. Read from Firehose S3 table\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/connectors/table/filesystem/\nDROP TABLE IF EXISTS s3source;\nCREATE TABLE s3source (\n  `player_id` STRING,\n  `speed_kmph` BIGINT,\n  `distance_meters` BIGINT,\n  `event_time` TIMESTAMP(3),\n  `file.path` STRING NOT NULL METADATA\n) WITH (\n  'connector' = 'filesystem',\n  'path' = 's3://bucket/path-to-file-or-folder',\n  'format' = 'json'\n);",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T20:45:47+0000",
+      "dateUpdated": "2023-08-03T20:47:00+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -1850,7 +1717,7 @@
       "dateStarted": "2023-08-03T20:45:47+0000",
       "dateFinished": "2023-08-03T20:45:48+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:324"
+      "$$hashKey": "object:78"
     },
     {
       "text": "%flink.ssql\nSELECT * FROM s3source;",
@@ -1906,6 +1773,15 @@
         "params": {},
         "forms": {}
       },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "player_id\tspeed_kmph\tdistance_meters\tevent_time\tfile.path\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\n"
+          }
+        ]
+      },
       "apps": [],
       "runtimeInfos": {
         "jobUrl": {
@@ -1916,7 +1792,7 @@
           "values": [
             {
               "jobUrl": "/flinkdashboard/#/job/53dd7a920aee8e2fc5449d2867029946",
-              "$$hashKey": "object:18262"
+              "$$hashKey": "object:2178"
             }
           ],
           "interpreterSettingId": "flink"
@@ -1926,19 +1802,10 @@
       "jobName": "paragraph_1691076993279_1308135126",
       "id": "paragraph_1691076993279_1308135126",
       "dateCreated": "2023-08-03T15:36:33+0000",
-      "status": "FINISHED",
-      "$$hashKey": "object:325",
-      "dateFinished": "2023-08-03T20:46:01+0000",
       "dateStarted": "2023-08-03T20:45:50+0000",
-      "results": {
-        "code": "SUCCESS",
-        "msg": [
-          {
-            "type": "TABLE",
-            "data": "player_id\tspeed_kmph\tdistance_meters\tevent_time\tfile.path\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\nplayer-4\t309\t49\t2023-07-28 15:20:26.731\t/year=2023/month=07/day=28/KDS-S3-plRmI-3-2023-08-03-15-20-26-8607dd43-77f8-3c1e-b607-d1f1b79542d7\n"
-          }
-        ]
-      }
+      "dateFinished": "2023-08-03T20:46:01+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:79"
     },
     {
       "text": "%flink.ssql\n-- Part 5: Replay data from S3 source. Replay table\nDROP TABLE IF EXISTS replay;\nCREATE TABLE replay (\n  `player_id` STRING,\n  `speed_kmph` BIGINT,\n  `distance_meters` BIGINT,\n  `event_time` TIMESTAMP(3)\n) WITH (\n  'connector' = 'kinesis',\n  'stream' = 'GamingLeaderboardStack-replay',\n  'aws.region' = 'eu-west-1', -- example: eu-west-1\n  'format' = 'json' -- source data in json format\n);",
@@ -1980,12 +1847,12 @@
       "dateStarted": "2023-08-03T20:46:09+0000",
       "dateFinished": "2023-08-03T20:46:10+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:326"
+      "$$hashKey": "object:80"
     },
     {
-      "text": "%flink.ssql\n-- Part 5: Replay data from S3 source. Select from S3 and write to kinesis\nINSERT INTO replay SELECT player_id, speed_kmph, distance_meters, event_time FROM s3source;",
+      "text": "%flink.ssql\n-- Part 5: Replay data from S3 source. Select from S3 and write to kinesis\n-- Challenge 5.2: Replay data from previous week to backfill leaderboard for last week.\n-- Answer: Using below query you can insert records from S3 to any streaming table and apply same logic as leaderboard to backfill.\nINSERT INTO replay SELECT player_id, speed_kmph, distance_meters, event_time FROM s3source;",
       "user": "anonymous",
-      "dateUpdated": "2023-08-03T20:46:13+0000",
+      "dateUpdated": "2023-08-03T21:09:37+0000",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -2023,7 +1890,7 @@
           "values": [
             {
               "jobUrl": "/flinkdashboard/#/job/78d4cf5dc6941e47e9dcdad8c4600566",
-              "$$hashKey": "object:18322"
+              "$$hashKey": "object:10717"
             }
           ],
           "interpreterSettingId": "flink"
@@ -2036,7 +1903,7 @@
       "dateStarted": "2023-08-03T20:46:13+0000",
       "dateFinished": "2023-08-03T20:46:30+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:327"
+      "$$hashKey": "object:81"
     },
     {
       "text": "%flink.ssql\n",
@@ -2067,7 +1934,7 @@
       "id": "paragraph_1691077009837_1795955588",
       "dateCreated": "2023-08-03T15:36:49+0000",
       "status": "READY",
-      "$$hashKey": "object:328"
+      "$$hashKey": "object:82"
     }
   ],
   "name": "answers",
@@ -2083,6 +1950,30 @@
         "object": "0 seconds",
         "noteId": "2J9R3NQ3J",
         "paragraphId": "paragraph_1691076922018_33122586"
+      },
+      {
+        "name": "duration",
+        "object": "1 minutes 53 seconds",
+        "noteId": "2J9R3NQ3J",
+        "paragraphId": "paragraph_1690968058885_518333519"
+      },
+      {
+        "name": "duration",
+        "object": "52 seconds",
+        "noteId": "2J9R3NQ3J",
+        "paragraphId": "paragraph_1690968610778_451974752"
+      },
+      {
+        "name": "duration",
+        "object": "1 minutes 59 seconds",
+        "noteId": "2J9R3NQ3J",
+        "paragraphId": "paragraph_1691060399968_1658344630"
+      },
+      {
+        "name": "duration",
+        "object": "1 minutes 34 seconds",
+        "noteId": "2J9R3NQ3J",
+        "paragraphId": "paragraph_1691008449909_159075"
       }
     ]
   },
