@@ -1,0 +1,1458 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%flink.ssql\n-- Note: Please run only one query at a time as Apache Flink SQL queries runs continuously on the data (as new row is added to the source table in time).\n-- Use pause (||) button at the right of each paragraph to stop the query. Alternatively, run below paragraph to cancel all running queries.",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858772_747225357",
+      "id": "paragraph_1690886156102_1343599895",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:21427"
+    },
+    {
+      "text": "%flink.pyflink\n# Cancel ALL Running Queries\nimport requests\n\nr = requests.get(\"https://zeppelin-flink:8082/jobs\", verify=False)\njobs = r.json()['jobs']\nprint(jobs)\n\nfor job in jobs:\n    if (job[\"status\"] == \"RUNNING\"):\n        print(requests.patch(\"https://zeppelin-flink:8082/jobs/{}\".format(job[\"id\"]), verify=False))",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858772_1720438675",
+      "id": "paragraph_1691009386200_317726874",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21428"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 1: Streaming ingestion.\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/connectors/table/kinesis/\nDROP TABLE IF EXISTS `events`;\nCREATE TABLE `events` (\n    `player_id` STRING,\n    `speed_kmph` BIGINT,\n    `distance_meters` BIGINT,\n    `event_time` TIMESTAMP(3),\n    `event_time_tz` AS CAST(event_time AS TIMESTAMP_LTZ(3)),\n     WATERMARK FOR event_time_tz AS event_time_tz - INTERVAL '5' SECOND\n)\nWITH (\n    'connector' = 'kinesis', -- connect to the kinesis stream\n    'stream' = 'GamingLeaderboardStack-events',\n    'aws.region' = 'eu-west-1', -- example: eu-west-1\n    'scan.stream.initpos' = 'LATEST', -- read from the end of the stream\n    'format' = 'json' -- source data in json format\n);\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858772_1440494775",
+      "id": "paragraph_1690478078662_357011998",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21429"
+    },
+    {
+      "text": "%flink.ssql(type=update)\n-- Part 1: Streaming ingestion reading data from kinesis source stream (Populated by DataGenerator constantly)\n-- Challenge 1: Can you Spin up studio notebook and select data from events table?\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:57:19+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "player_id": "string",
+                      "speed_kmph": "string",
+                      "distance_meters": "string",
+                      "event_time": "string",
+                      "event_time_tz": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858772_768500806",
+      "id": "paragraph_1690478089140_320348584",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21430"
+    },
+    {
+      "text": "%flink.ssql\n-- Create players table connected to the MySQL in CDC mode.\n-- Part 2: Streaming enrichment using MySQL CDC\n-- Ref: https://github.com/ververica/flink-cdc-connectors/blob/master/docs/content/connectors/mysql-cdc.md\nDROP TABLE IF EXISTS `players`;\nCREATE TABLE `players` (\n    `operation_ts` TIMESTAMP_LTZ(3) METADATA FROM 'op_ts' VIRTUAL,\n    `player_id` STRING,\n    `alias` STRING,\n    `level` BIGINT,\n    `country` STRING,\n    `is_bot` INT,\n    `subscription_type` STRING,\n     WATERMARK FOR operation_ts AS operation_ts - INTERVAL '5' SECOND,\n    PRIMARY KEY(player_id) NOT ENFORCED\n)\nWITH (\n    'connector' = 'mysql-cdc',\n    'hostname' = '', -- Enter host name here from Cloudformation output.\n    'port' = '3306',\n    'username' = 'admin',\n    'password' = '', -- Enter password here from Cloudformation output secrets manager link\n    'database-name' = 'gaming',\n    'table-name' = 'players'\n);",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:51:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858773_251643886",
+      "id": "paragraph_1690794702548_2092136882",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21431"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC, reading CDC events from MySQL binlog table.\n-- Challenge 2.1: Can you select data from enriched-events table?\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:58:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "operation_ts": "string",
+                      "player_id": "string",
+                      "alias": "string",
+                      "level": "string",
+                      "country": "string",
+                      "is_bot": "string",
+                      "subscription_type": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858773_684639748",
+      "id": "paragraph_1690975947324_11884135",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21432"
+    },
+    {
+      "text": "%flink.ssql\n-- Describe schema of the event table\ndesc events;",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Column": "string",
+                      "Type": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858780_1151035325",
+      "id": "paragraph_1690967650367_1213594548",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21433"
+    },
+    {
+      "text": "%flink.ssql\n-- Describe schema of the players table\ndesc players;",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Column": "string",
+                      "Type": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858781_1607994897",
+      "id": "paragraph_1690967659582_1753566068",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21434"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC\n-- Challenge 2.1: Can you select data from enriched-events table and plot pie chart showing player distribution by country?\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:58:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "pieChart",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "country0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "level1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "online_players2",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "updated": false,
+                    "names": {
+                      "country": "string",
+                      "players_count": "string"
+                    }
+                  },
+                  "updated": false,
+                  "initialized": false,
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  }
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "lineChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "stackedAreaChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "pieChart": {}
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "country",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "players_count",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858781_2143339781",
+      "id": "paragraph_1690976030152_993391829",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21435"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC (Joining latest CDC value with real-time event stream to keep enrichment up to date)\n-- Challenge 2.2: Can you join events with latest values (Insert/Update/Deletes) of players table by system time?\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/queries/joins/#temporal-joins\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T21:00:04+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "player_id": "string",
+                      "speed_kmph": "string",
+                      "distance_meters": "string",
+                      "event_time": "string",
+                      "event_time_tz": "string",
+                      "alias": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858781_290059103",
+      "id": "paragraph_1690979670436_444527060",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21436"
+    },
+    {
+      "text": "%flink.ssql(type=update)\n-- Part 3: Stream processing. Computing functional leaderboard\n-- Challenge 3.1: Can you run a query to compute leaderboard based on average speed and total distance by player refreshing every 30 seconds?\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/queries/with/\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/queries/window-tvf/\nWITH enriched_events AS (\n    select events.*, alias from ...\n)\nSELECT ...\nFROM enriched_events\nGROUP BY alias, TUMBLE(event_time_tz, INTERVAL '30' SECOND);",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T21:00:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "event_time": "string",
+                      "alias": "string",
+                      "total_distance": "string",
+                      "avg_speed": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858781_1939051454",
+      "id": "paragraph_1690906067995_1983365530",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21437"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 3: Stream processing. Computing functional leaderboard and storing it as view for re-use.\n-- Challenge 3.2: Can you register leaderboard query as a view?\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/create/#create-view\nDROP VIEW IF EXISTS leaderboard;\nCREATE VIEW leaderboard AS\nWITH enriched_events AS (\n    select events.*, alias from ...\n)\nSELECT ...\nFROM enriched_events\nGROUP BY alias, TUMBLE(event_time_tz, INTERVAL '30' SECOND);",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T21:00:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "event_time": "string",
+                      "command": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858781_350625378",
+      "id": "paragraph_1690906743926_51331311",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21438"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 3: Storing results to the Redis database\n-- Create results table to push redis commands to the results stream for lambda function to execute them on Redis\nDROP TABLE IF EXISTS `results`;\nCREATE TABLE `results` (\n    `event_time` TIMESTAMP(3),\n    `command` STRING\n)\nWITH (\n    'connector' = 'kinesis', -- connect to the kinesis stream\n    'stream' = 'GamingLeaderboardStack-results',\n    'aws.region' = 'eu-west-1', -- example: eu-west-1\n    'format' = 'json' -- source data in json format\n)",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858781_1033271004",
+      "id": "paragraph_1690905916038_1169870672",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21439"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 3: Further processing output for storing results to the Redis database\n-- Ref: https://redis.io/commands/zincrby/\nselect event_time, CONCAT('ZINCRBY leaderboard:total_distance ',CAST(total_distance AS STRING),' ',alias) as command from leaderboard",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "event_time": "string",
+                      "command": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858781_1637554956",
+      "id": "paragraph_1690972398660_1747030839",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21440"
+    },
+    {
+      "text": "%flink.ssql(type=update)\n-- Part 3: Leaderboard 1: Storing total_distance results to the Redis database\n-- Ref: https://redis.io/commands/zincrby/\n-- Challenge 3.3: Can you store results to MemoryDB for Redis?",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T21:02:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858782_34419822",
+      "id": "paragraph_1690968058885_518333519",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21441"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 3: Further processing output for storing results to the Redis database\n-- Ref: https://redis.io/commands/zadd/\nselect event_time, CONCAT('ZADD leaderboard:top_speed GT ',CAST(avg_speed AS STRING),' ',alias) as command from leaderboard",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "event_time": "string",
+                      "command": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858782_1771198356",
+      "id": "paragraph_1690986080830_1352499004",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21442"
+    },
+    {
+      "text": "%flink.ssql(type=update)\n-- Part 3: Leaderboard 2: Storing top_speed results to the Redis database\n-- Ref: https://redis.io/commands/zincrby/\n-- Challenge 3.3: Can you store results to MemoryDB for Redis?\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T21:03:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858782_905336672",
+      "id": "paragraph_1690968610778_451974752",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21443"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 4: Dynamic parameter change and apply those as filters\nDROP TABLE IF EXISTS `config`;\nCREATE TABLE `config` (\n    `is_bot` INT,\n    `event_time` BIGINT,\n    `event_time_tz` AS TO_TIMESTAMP_LTZ(event_time, 3),\n     WATERMARK FOR event_time_tz AS event_time_tz - INTERVAL '5' SECOND\n)\nWITH (\n    'connector' = 'kinesis', -- connect to the kinesis stream\n    'stream' = 'GamingLeaderboardStack-config',\n    'aws.region' = 'eu-west-1', -- example: eu-west-1\n    'scan.stream.initpos' = 'LATEST', -- read from the very beginning of the stream\n    'format' = 'json' -- source data in json format\n);",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858782_133171453",
+      "id": "paragraph_1690990554351_1144161397",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21444"
+    },
+    {
+      "text": "%flink.ssql\nselect is_bot from config order by event_time desc limit 1",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "is_bot": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858782_1720484809",
+      "id": "paragraph_1691059058116_1387457299",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21445"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 4: Dynamic parameter change. keep real players only in the stream, filter all the bots and produce v2 shadow version of leaderboard before going live.\n-- Note: Push event from Lambda publisher after starting the job and when you see records stady for players table in Flink UI\n-- Challenge 4.1: Remove all bot users from leaderboard processing.\nDROP VIEW IF EXISTS leaderboard_v2;\nCREATE VIEW leaderboard_v2 AS\nWITH enriched_events AS (\n    ...\n)\nSELECT ...\nFROM enriched_events\nGROUP BY alias, TUMBLE(event_time_tz, INTERVAL '30' SECOND);",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T21:05:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858782_1683443069",
+      "id": "paragraph_1691007246234_554409542",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21446"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 4: Dynamic parameter change and apply those as filters\nselect * from leaderboard_v2",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "event_time": "string",
+                      "alias": "string",
+                      "total_distance": "string",
+                      "avg_speed": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858782_1800851591",
+      "id": "paragraph_1691007562100_113167284",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21447"
+    },
+    {
+      "text": "%flink.ssql(type=update)\n-- Part 4: Dynamic parameter change, shadow testing (A/B) prepare v2 leadboards for comparisions\n-- Challenge 4.2: Remove all bot users from leaderboard processing and storing leaderboard v2 for shadow (A/B) testing.\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T21:05:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858782_1267766997",
+      "id": "paragraph_1691060399968_1658344630",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21448"
+    },
+    {
+      "text": "%flink.ssql(type=update)\n-- Part 4: Dynamic parameter change, shadow testing (A/B) prepare v2 leadboards for comparisions\n-- Challenge 4.2: Remove all bot users from leaderboard processing and storing leaderboard v2 for shadow (A/B) testing.\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T21:05:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858783_1616921614",
+      "id": "paragraph_1691008449909_159075",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21449"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 5: Late arrival of data - Redis ZADD GT and ZINCRBY handles at the destinition\n-- ZINCRBY increments total distance irrespective of the time it arrives.\n-- ZADD with GT option replaces value of top speed only if speed is higher than the one currently stored. Late data doen't affect this behaviour.\n-- Ref: https://redis.io/commands/zadd/\n-- Ref: https://redis.io/commands/zincrby/\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858783_1027813905",
+      "id": "paragraph_1691008561481_1032412450",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21450"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 5: Data deduplication in JOIN query\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/table/sql/queries/deduplication/\n-- Challenge 5.1: Deduplication of the data based on event_time and player_id.\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T21:07:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "player_id": "string",
+                      "speed_kmph": "string",
+                      "distance_meters": "string",
+                      "event_time": "string",
+                      "event_time_tz": "string",
+                      "alias": "string",
+                      "rownum": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858783_1691849267",
+      "id": "paragraph_1691010115440_2065711375",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21451"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 5: Replay data from S3 source. Read from Firehose S3 table\n-- Ref: https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/connectors/table/filesystem/\nDROP TABLE IF EXISTS s3source;\nCREATE TABLE s3source (\n  `player_id` STRING,\n  `speed_kmph` BIGINT,\n  `distance_meters` BIGINT,\n  `event_time` TIMESTAMP(3),\n  `file.path` STRING NOT NULL METADATA\n) WITH (\n  'connector' = 'filesystem',\n  'path' = 's3://bucket/path-to-file-or-folder',\n  'format' = 'json'\n);",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858783_2092506701",
+      "id": "paragraph_1691010299702_38382553",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21452"
+    },
+    {
+      "text": "%flink.ssql\nSELECT * FROM s3source;",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "player_id": "string",
+                      "speed_kmph": "string",
+                      "distance_meters": "string",
+                      "event_time": "string",
+                      "file.path": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858783_740694426",
+      "id": "paragraph_1691076993279_1308135126",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21453"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 5: Replay data from S3 source. Replay table\nDROP TABLE IF EXISTS replay;\nCREATE TABLE replay (\n  `player_id` STRING,\n  `speed_kmph` BIGINT,\n  `distance_meters` BIGINT,\n  `event_time` TIMESTAMP(3)\n) WITH (\n  'connector' = 'kinesis',\n  'stream' = 'GamingLeaderboardStack-replay',\n  'aws.region' = 'eu-west-1', -- example: eu-west-1\n  'format' = 'json' -- source data in json format\n);",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858783_755016561",
+      "id": "paragraph_1691076834588_1539464867",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21454"
+    },
+    {
+      "text": "%flink.ssql\n-- Part 5: Replay data from S3 source. Select from S3 and write to kinesis\n-- Challenge 5.2: Replay data from previous week to backfill leaderboard for last week.\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T21:07:55+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858783_1945203779",
+      "id": "paragraph_1691076922018_33122586",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21455"
+    },
+    {
+      "text": "%flink.ssql\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-08-03T20:50:58+0000",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1691095858783_1303843022",
+      "id": "paragraph_1691077009837_1795955588",
+      "dateCreated": "2023-08-03T20:50:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:21456"
+    }
+  ],
+  "name": "challenges",
+  "id": "2J77QA634",
+  "defaultInterpreterGroup": "flink",
+  "version": "0.10.1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/challenges"
+}
