@@ -8,15 +8,15 @@ import {LogGroup, LogStream, RetentionDays} from "aws-cdk-lib/aws-logs";
 import {CfnDatabase} from "aws-cdk-lib/aws-glue";
 import {Asset} from "aws-cdk-lib/aws-s3-assets";
 
-const fs = require('fs');
-import path = require('path');
+
 
 
 interface ManagedFlinkNotebookProps {
     appName: string,
     role: IRole,
     vpc?: IVpc,
-    glueDB: CfnDatabase
+    glueDB: CfnDatabase,
+    jarAsset: Asset
 }
 
 export class ManagedFlinkNotebook extends Construct {
@@ -41,18 +41,11 @@ export class ManagedFlinkNotebook extends Construct {
 
         if (props.vpc) {
 
-            const fatJarPath: string = path.join(__dirname, '../../../jars/fat-jar-mysql-cdc-1.0-SNAPSHOT.jar');
-
-            const asset = new Asset(this, "fat-jar", {
-                path: fatJarPath
-            });
-            asset.grantRead(props.role);
-
             customArtifacts.push({
                 artifactType: "DEPENDENCY_JAR",
                 s3ContentLocation: {
-                    fileKey: asset.s3ObjectKey,
-                    bucketArn: asset.bucket.bucketArn
+                    fileKey: props.jarAsset.s3ObjectKey,
+                    bucketArn: props.jarAsset.bucket.bucketArn
                 }
             });
 

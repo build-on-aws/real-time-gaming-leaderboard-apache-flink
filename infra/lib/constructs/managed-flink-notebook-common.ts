@@ -2,12 +2,15 @@ import {Construct} from "constructs";
 import {Aws} from "aws-cdk-lib";
 import {PolicyDocument, PolicyStatement, Role, ServicePrincipal} from "aws-cdk-lib/aws-iam";
 import {CfnDatabase} from "aws-cdk-lib/aws-glue";
+import {Asset} from "aws-cdk-lib/aws-s3-assets";
 
+import path = require('path');
 
 export class ManagedFlinkNotebookCommon extends Construct {
 
     readonly notebookRole: Role
     readonly glueDB: CfnDatabase
+    readonly jarAsset: Asset
 
 
     constructor(scope: Construct, id: string) {
@@ -19,6 +22,11 @@ export class ManagedFlinkNotebookCommon extends Construct {
             databaseInput: {
                 name: "leaderboard"
             }
+        });
+
+        const fatJarPath: string = path.join(__dirname, '../../../jars/fat-jar-mysql-cdc-1.0-SNAPSHOT.jar');
+        this.jarAsset = new Asset(this, "fat-jar", {
+            path: fatJarPath
         });
 
         const databaseArn = "arn:aws:glue:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":database/" + this.glueDB.ref;
@@ -58,7 +66,10 @@ export class ManagedFlinkNotebookCommon extends Construct {
                             "kinesis:GetShardIterator",
                             "kinesis:ListShards",
                             "kinesis:ListStreams",
-                            "kinesis:SubscribeToShard"
+                            "kinesis:SubscribeToShard",
+                            "kinesis:PutRecord",
+                            "kinesis:PutRecords",
+                            "s3:GetObject"
                         ], resources: [
                             databaseArn,
                             "arn:aws:glue:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":database/hive",
@@ -68,7 +79,8 @@ export class ManagedFlinkNotebookCommon extends Construct {
                             "arn:aws:logs:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":log-group:*",
                             "arn:aws:logs:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":log-group:*:*",
                             "arn:aws:logs:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":log-group:*:log-stream:*",
-                            "arn:aws:kinesis:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":stream/" + Aws.STACK_NAME + "-*"
+                            "arn:aws:kinesis:" + Aws.REGION + ":" + Aws.ACCOUNT_ID + ":stream/" + Aws.STACK_NAME + "-*",
+                            this.jarAsset.bucket.bucketArn + "/*"
                         ]
                     })]
                 })

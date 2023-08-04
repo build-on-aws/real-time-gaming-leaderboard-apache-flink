@@ -35,7 +35,8 @@ export class GamingLeaderboardStack extends Stack {
         new ManagedFlinkNotebook(this, "app", {
             appName: Aws.STACK_NAME + "-notebook",
             glueDB: notebookCommon.glueDB,
-            role: notebookCommon.notebookRole
+            role: notebookCommon.notebookRole,
+            jarAsset: notebookCommon.jarAsset
         });
 
         // ------------------- Part 2: CDC Enrichment setup -------------------
@@ -57,7 +58,8 @@ export class GamingLeaderboardStack extends Stack {
             appName: Aws.STACK_NAME + "-notebook-in-vpc",
             glueDB: notebookCommon.glueDB,
             role: notebookCommon.notebookRole,
-            vpc: network.vpc
+            vpc: network.vpc,
+            jarAsset: notebookCommon.jarAsset
         });
         if (managedFlinkNotebook.applicationSecurityGroup) {
             serverlessDatabase.securityGroup.addIngressRule(managedFlinkNotebook.applicationSecurityGroup, Port.tcp(3306))
@@ -70,7 +72,6 @@ export class GamingLeaderboardStack extends Stack {
             streamMode: StreamMode.ON_DEMAND,
             encryption: StreamEncryption.MANAGED
         });
-        resultsStream.grantWrite(notebookCommon.notebookRole);
 
         // Sync redis commands from results stream tp MemoryDB for Redis
         const memorydbSync = new MemorydbSync(this, "MemorydbSync", {vpc: network.vpc, stream: resultsStream});
@@ -94,11 +95,10 @@ export class GamingLeaderboardStack extends Stack {
 
         // ------------------- Part 5: Archival and Replay -------------------
         // Create new stream from the console or run below code to auto complete setup
-        const replayStream = new Stream(this, 'replay', {
+        new Stream(this, 'replay', {
             streamName: Aws.STACK_NAME + "-replay",
             streamMode: StreamMode.ON_DEMAND,
             encryption: StreamEncryption.MANAGED
         });
-        replayStream.grantWrite(notebookCommon.notebookRole);
     }
 }
