@@ -53,6 +53,7 @@ export class GamingLeaderboardStack extends Stack {
             vpc: network.vpc
         });
 
+        // ------------------- Part 2: Move notebook to VPC Challenge Completed -------------------
         // Spin up new notebook in VPC
         const managedFlinkNotebook = new ManagedFlinkNotebook(this, "app-in-vpc", {
             appName: Aws.STACK_NAME + "-notebook-in-vpc",

@@ -70,17 +70,11 @@ that level from the [tags](https://github.com/build-on-aws/real-time-gaming-lead
    Adds new kinesis data stream to receive Redis queries, Lambda to execute those to Amazon MemoryDB and Grafana
    installed on EC2 for visualization.
    ![](img/Architecture-3-processing-storage-redis-grafana.jpg)
-6. [3-process-store-visualize-answer](https://github.com/build-on-aws/real-time-gaming-leaderboard-apache-flink/tree/3-process-store-visualize-answer):
-   Adds challenge answer in [answers.zpln](notebooks/answers.zpln) notebook.
-7. [4-dynamic-config-setup](https://github.com/build-on-aws/real-time-gaming-leaderboard-apache-flink/tree/4-dynamic-config-setup):
+6. [4-dynamic-config-setup](https://github.com/build-on-aws/real-time-gaming-leaderboard-apache-flink/tree/4-dynamic-config-setup):
    Adds new kinesis data stream and Lambda to publish config updates to Amazon Managed Service for Apache
    Flink.
    ![](img/Architecture-4-dynamic-config.jpg)
-8. [4-dynamic-config-answer](https://github.com/build-on-aws/real-time-gaming-leaderboard-apache-flink/tree/4-dynamic-config-answer):
-   Adds challenge answer in [answers.zpln](notebooks/answers.zpln) notebook.
-9. [5-archive-and-replay-setup](https://github.com/build-on-aws/real-time-gaming-leaderboard-apache-flink/tree/5-archive-and-replay-setup):
+7. [5-archive-and-replay-setup](https://github.com/build-on-aws/real-time-gaming-leaderboard-apache-flink/tree/5-archive-and-replay-setup):
    Adds two new Amazon Managed Service for Apache Flink applications. One to store data to S3 and one to
    replay.
    ![](img/Architecture-5-late-arrival-exactly-once-history-replay.jpg)
-10. [5-archive-and-replay-answer](https://github.com/build-on-aws/real-time-gaming-leaderboard-apache-flink/tree/5-archive-and-replay-answer):
-    Adds challenge answer in [answers.zpln](notebooks/answers.zpln) notebook.
