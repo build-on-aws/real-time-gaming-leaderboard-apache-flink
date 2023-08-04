@@ -3,8 +3,8 @@ import {CfnApplication} from "aws-cdk-lib/aws-kinesisanalyticsv2";
 import {CfnRole, IRole} from "aws-cdk-lib/aws-iam";
 import {ISecurityGroup, IVpc, SecurityGroup} from "aws-cdk-lib/aws-ec2";
 import {CfnApplicationCloudWatchLoggingOptionV2} from "aws-cdk-lib/aws-kinesisanalytics";
-import {Aws} from "aws-cdk-lib";
-import {LogGroup, LogStream} from "aws-cdk-lib/aws-logs";
+import {Aws, RemovalPolicy} from "aws-cdk-lib";
+import {LogGroup, LogStream, RetentionDays} from "aws-cdk-lib/aws-logs";
 import {CfnDatabase} from "aws-cdk-lib/aws-glue";
 import {Asset} from "aws-cdk-lib/aws-s3-assets";
 
@@ -117,9 +117,13 @@ export class ManagedFlinkNotebook extends Construct {
             });
         }
 
-        const logGroup = new LogGroup(this, "logGroup");
+        const logGroup = new LogGroup(this, "logGroup", {
+            retention: RetentionDays.ONE_MONTH,
+            removalPolicy: RemovalPolicy.DESTROY
+        });
         const logStream = new LogStream(this, "logStream", {
-            logGroup: logGroup
+            logGroup: logGroup,
+            removalPolicy: RemovalPolicy.DESTROY
         });
 
         application.addDependency(props.glueDB);
