@@ -38,15 +38,18 @@ module. `answer` branch contains answer of a challenge.
 
 - Latest Node JS and npm
 - Latest cdk `npm install -g aws-cdk`
+- Python 3 with pip
 
 ## Deploying
 
 1. Take a check out of a specific branch (or download source code from
    the [tags](https://github.com/build-on-aws/real-time-gaming-leaderboard-apache-flink/tags))
-2. Go to the [infra](infra) folder and run `npm install`
-3. Go to the [infra](infra) folder and run `cdk bootstrap` if using CDK for the first time in the given AWS account and
+2. Switch to the folder [players](infra/functions/players) and run `pip3 install -r requirements.txt -t .`
+3. Switch to the folder [redis-sync](infra/functions/redis-sync) and run `pip3 install -r requirements.txt -t .`
+4. Go to the [infra](infra) folder and run `npm install`
+5. Go to the [infra](infra) folder and run `cdk bootstrap` if using CDK for the first time in the given AWS account and
    region, else skip this step.
-4. Go to the [infra](infra) folder and run `cdk deploy`
+6. Go to the [infra](infra) folder and run `cdk deploy`
 
 ## Progressive modules
 
