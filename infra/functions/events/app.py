@@ -31,5 +31,6 @@ def lambda_handler(event, context):
 
             # Mimic real world retry and duplicate record ingestion 1 in 3 of the time (33% fail and retry)
             if random.randint(1, 3) == 1:
+                time.sleep(2)
                 kinesis.put_records(Records=records, StreamName=os.environ["KINESIS_STREAM_NAME"])
-            time.sleep(5)
+        time.sleep(5)
