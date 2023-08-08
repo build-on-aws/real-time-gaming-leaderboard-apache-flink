@@ -246,7 +246,7 @@
       "$$hashKey": "object:57"
     },
     {
-      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC, reading CDC events from MySQL binlog table.\n-- Challenge 2.1: Can you select data from enriched-events table?\nselect * from players",
+      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC, reading CDC events from MySQL binlog table.\n-- Challenge 2.1: Can you select data from players table?\nselect * from players",
       "user": "anonymous",
       "dateUpdated": "2023-08-03T20:58:57+0000",
       "progress": 0,
@@ -482,7 +482,7 @@
       "$$hashKey": "object:60"
     },
     {
-      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC\n-- Challenge 2.1: Can you select data from enriched-events table and plot pie chart showing player distribution by country?\nselect country, count(distinct player_id) as players_count from players group by country;",
+      "text": "%flink.ssql\n-- Part 2: Streaming enrichment using MySQL CDC\n-- Challenge 2.1: Can you select data from players table and plot pie chart showing player distribution by country?\nselect country, count(distinct player_id) as players_count from players group by country;",
       "user": "anonymous",
       "dateUpdated": "2023-08-03T20:59:15+0000",
       "progress": 0,
