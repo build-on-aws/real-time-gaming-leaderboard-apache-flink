@@ -27,7 +27,15 @@ export class DatagenPlayers extends Construct {
         const dataGenFn = new Function(this, 'fn', {
             runtime: Runtime.PYTHON_3_9,
             handler: 'app.lambda_handler',
-            code: Code.fromAsset(playersFnFolder),
+            code: Code.fromAsset(playersFnFolder, {
+              bundling: {
+                image: Runtime.PYTHON_3_9.bundlingImage,
+                command: [
+                  'bash', '-c',
+                  'pip install -r requirements.txt -t /asset-output && cp -au . /asset-output'
+                ],
+              },
+            }),
             timeout: Duration.minutes(1),
             vpc: props.vpc,
             vpcSubnets: {subnetType: SubnetType.PRIVATE_WITH_EGRESS},
